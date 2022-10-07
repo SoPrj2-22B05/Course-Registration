@@ -1,6 +1,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,visualstudio,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,visualstudio,c++
 
+# 기타
+과목 데이터 파일.txt
+사용자 데이터 파일.txt
+
+
 ### C++ ###
 # Prerequisites
 *.d
