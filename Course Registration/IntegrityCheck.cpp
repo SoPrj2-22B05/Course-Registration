@@ -1,6 +1,7 @@
 #pragma once
 #include "IntegrityCheck.h"
 
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <locale.h>
@@ -9,6 +10,7 @@
 #include <vector>
 #include <map>
 #include <regex>
+#include <atlconv.h>
 
 #define gotoUTF locale::global(locale("ko_KR.UTF-8"));
 #define gotoClassic locale::global(locale::classic());
@@ -20,12 +22,18 @@ using namespace std;
 vector<int> Subject_File_Grammar_Error_Line;
 vector<int> User_File_Grammar_Error_Line;
 
+bool is_unmatched_major_grade = false;
+vector<int> zero_major_lines;
+vector<int> nonzero_liberal_arts_lines;
+bool is_duplicated_SID = false;
+map<wstring, vector<int>> SIDs; // <과목번호, 해당하는 행들>
+
 int admin_count = 0;
 bool is_duplicated_UID = false;
 map<wstring, vector<int>> UIDs; // <학번(교번), 해당하는 행들>
 
 
-
+void check_File_Exist();
 void check_Subject_File();
 void check_User_File();
 
@@ -36,6 +44,7 @@ bool check_Smajor(wstring const& str);
 bool check_Sgrade(wstring const& str);
 bool check_Stime(wstring const& str);
 bool check_Scapacity(wstring const& str);
+bool check_Smajor_Sgrade_Match(wstring const& smajor, wstring const& sgrade, int line);
 
 bool check_UID(wstring const& str);
 bool check_Uname(wstring const& str);
@@ -43,23 +52,33 @@ bool check_Umajor(wstring const& str);
 bool check_Ugrade(wstring const& str);
 bool check_Acquisition_Credit(wstring const& str);
 
+string wstr2str(const std::wstring& _src);
 wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
 
 
 
 void Integrity_Check() {
+	check_File_Exist();
 	check_Subject_File();
 	check_User_File();
+}
+
+void check_File_Exist() {
+	gotoUTF;
+	wstring dir = filesystem::current_path();
+	wfstream f1(L"과목 데이터 파일.txt");
+	wfstream f2(L"사용자 데이터 파일.txt");
+	if (!f1.is_open() || !f2.is_open()) {
+		wcout << L"오류 : 홈 경로 " << dir << L" 에 과목 데이터 파일 또는 사용자 데이터 파일이 없습니다.프로그램을 종료합니다." << endl;
+		exit(0);
+	}
+	f1.close();
+	f2.close();
 }
 
 void check_Subject_File() {
 	gotoUTF;
 	wfstream f(L"과목 데이터 파일.txt");
-
-	if (!f.is_open()) {
-		wprintf(L"오류 : 홈 경로에 과목 데이터 파일 또는 사용자 데이터 파일이 없습니다. 프로그램을 종료합니다.????프로그램 위치 출력????\n");
-		exit(0);
-	}
 
 	vector<wstring> data; // id  name  credit  major  grade  time  capacity
 	wstring line, str;
@@ -95,12 +114,12 @@ void check_Subject_File() {
 			Subject_File_Grammar_Error_Line.push_back(lineCount);
 			continue;
 		}
-		//else {
-		//	if (UIDs.find(data[0]) != UIDs.end()) { // 학번(교번) 중복 체크
-		//		is_duplicated_UID = true;
-		//	}
-		//	UIDs[data[0]].push_back(lineCount);
-		//}
+		else {
+			if (SIDs.find(data[0]) != SIDs.end()) { // 과목번호 중복 체크
+				is_duplicated_SID = true;
+			}
+			SIDs[data[0]].push_back(lineCount);
+		}
 
 		if (!check_Sname(data[1])) { // 과목이름 체크
 			Subject_File_Grammar_Error_Line.push_back(lineCount);
@@ -126,6 +145,9 @@ void check_Subject_File() {
 			Subject_File_Grammar_Error_Line.push_back(lineCount);
 			continue;
 		}
+		if (!check_Smajor_Sgrade_Match(data[3], data[4],lineCount)) { // 전공/교양 - 학년 매칭 체크
+			is_unmatched_major_grade = true;
+		}
 
 		//for (int i = 0; i < data.size(); i++) {
 		//	wcout << data[i] + L" + ";
@@ -144,45 +166,47 @@ void check_Subject_File() {
 		}
 		printf("프로그램을 종료합니다.\n");
 	}
-	//else if (is_duplicated_UID || admin_count == 0) { // 의미 오류 있는 경우
-	//	printf("오류 : 사용자 데이터 파일의 의미 규칙이 올바르지 않습니다.\n");
+	else if (is_duplicated_SID || is_unmatched_major_grade) { // 의미 오류 있는 경우
+		printf("오류 : 과목 데이터 파일의 의미 규칙이 올바르지 않습니다.\n");
 
-	//	// 겹치는 학번(교번) 있으면 출력
-	//	for (auto it : UIDs) {
-	//		if (it.second.size() != 1) {
-	//			wcout << "\"" << it.first << "\"";
+		//겹치는 과목번호 있으면 출력
+		for (auto it : SIDs) {
+			if (it.second.size() != 1) {
+				wcout << "\"" << it.first << "\""<<"과목번호가 중복해서 존재합니다.\n# ";
+				for (int i = 0; i < it.second.size(); i++) {
+					printf("%d행", it.second[i]);
+					(i == it.second.size() - 1) ? printf("\n") : printf(",");
+				}
+			}
+		}
 
-	//			if (it.first.substr(0, 4).compare(L"0000") == 0) {
-	//				printf("교번이 중복해서 존재합니다.\n# ");
-	//			}
-	//			else {
-	//				printf("학번이 중복해서 존재합니다.\n# ");
-	//			}
+		// 교양인데 학년이 0이 아닌 행 있으면 출력
+		int error_size = nonzero_liberal_arts_lines.size();
+		if (error_size != 0) {
+			printf("전공/교양이 \"교양\"인데 학년이 0이 아닌 행이 존재합니다.\n# ");
+			for (int i = 0; i < error_size; i++) {
+				printf("%d행", nonzero_liberal_arts_lines[i]);
+				(i == error_size - 1) ? printf("\n") : printf(",");
+			}
+		}
 
-	//			for (int i = 0; i < it.second.size(); i++) {
-	//				printf("%d행", it.second[i]);
-	//				(i == it.second.size() - 1) ? printf("\n") : printf(",");
-	//			}
-	//		}
-	//	}
+		// 교양이 아닌데 학년이 0인 행 있으면 출력
+		error_size = zero_major_lines.size();
+		if (error_size != 0) {
+			printf("전공/교양이 \"교양\"이 아닌데 학년이 0인 행이 존재합니다.\n# ");
+			for (int i = 0; i < error_size; i++) {
+				printf("%d행", zero_major_lines[i]);
+				(i == error_size - 1) ? printf("\n") : printf(",");
+			}
+		}
 
-	//	// 관리자 없으면 출력
-	//	if (admin_count == 0) {
-	//		printf("관리자가 한 명도 존재하지 않습니다.\n");
-	//	}
-
-	//	printf("프로그램을 종료합니다.\n");
-	//}
+		printf("프로그램을 종료합니다.\n");
+	}
 }
 
 void check_User_File() {
 	gotoUTF;
 	wfstream f(L"사용자 데이터 파일.txt");
-
-	if (!f.is_open()) {
-		wprintf(L"오류 : 홈 경로에 과목 데이터 파일 또는 사용자 데이터 파일이 없습니다. 프로그램을 종료합니다.????프로그램 위치 출력????\n");
-		exit(0);
-	}
 
 	vector<wstring> data; // id  name  major  grade  acquisition_credit
 	wstring line, str;
@@ -431,6 +455,23 @@ bool check_Scapacity(wstring const& str) {
 	return true;
 }
 
+bool check_Smajor_Sgrade_Match(wstring const& smajor, wstring const& sgrade, int line) {
+	int grade = stoi(sgrade);
+	if (smajor.compare(L"교양") == 0) { // 교양인 경우
+		if (grade != 0) { // 학년이 0이 아니면
+			nonzero_liberal_arts_lines.push_back(line);
+			return false;
+		}
+	}
+	else { // 전공인 경우
+		if (grade == 0) { // 학년이 0이면
+			zero_major_lines.push_back(line);
+			return false;
+		}
+	}
+	return true;
+}
+
 bool check_UID(wstring const& str) {
 	// 문자열 내 모든 각 문자는 숫자로만 구성
 	// 문자열 길이가 9
@@ -488,6 +529,11 @@ bool check_Acquisition_Credit(wstring const& str) {
 	}
 	return true;
 }
+
+string wstr2str(const wstring& _src) {
+	USES_CONVERSION;
+	return string(W2A(_src.c_str()));
+};
 
 wstring& trim(wstring& s, const wchar_t* t) {
 	s.erase(0, s.find_first_not_of(t));
