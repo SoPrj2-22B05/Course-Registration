@@ -136,6 +136,7 @@
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Search.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="과목 데이터 파일.txt" />
