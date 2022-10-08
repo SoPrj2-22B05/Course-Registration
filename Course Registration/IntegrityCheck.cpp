@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <regex>
 
 #define gotoUTF locale::global(locale("ko_KR.UTF-8"));
@@ -15,26 +16,15 @@
 using namespace std;
 
 
-//wstring& ltrim(wstring& s, const wchar_t* t = L" \t\n\r\f\v") {
-//	s.erase(0, s.find_first_not_of(t));
-//	return s;
-//}
-//
-//wstring& rtrim(wstring& s, const wchar_t* t = L" \t\n\r\f\v") {
-//	s.erase(s.find_last_not_of(t) + 1);
-//	return s;
-//}
-
-wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v") {
-	s.erase(0, s.find_first_not_of(t));
-	s.erase(s.find_last_not_of(t) + 1);
-	//return ltrim(rtrim(s, t), t);
-	return s;
-}
-
 
 vector<int> Subject_File_Grammar_Error_Line;
 vector<int> User_File_Grammar_Error_Line;
+
+int admin_count = 0;
+bool is_duplicated_UID = false;
+map<wstring, vector<int>> UIDs; // <학번(교번), 해당하는 행들>
+
+
 
 void check_User_File();
 //void check_Subject_File();
@@ -44,6 +34,9 @@ bool check_Uname(wstring const& str);
 bool check_Umajor(wstring const& str);
 bool check_Ugrade(wstring const& str);
 bool check_Acquisition_Credit(wstring const& str);
+
+wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
+
 
 
 void Integrity_Check() {
@@ -70,11 +63,16 @@ void check_User_File() {
 		data.clear();
 		ss.clear();
 
+		// 비어있는 행인지 체크
+		line = trim(line);
+		if (line.compare(L"") == 0) {
+			User_File_Grammar_Error_Line.push_back(lineCount);
+			continue;
+		}
+
 		ss.str(line);
 		while (getline(ss, str, L'\t')) {
-
 			str = trim(str);
-			//str.erase(remove_if(str.begin(), str.end(), ::isspace), str.end());
 			if (str != L"") {
 				data.push_back(str);
 			}
@@ -83,6 +81,12 @@ void check_User_File() {
 		if (!check_UID(data[0])) { // 학번(교번) 문법 형식 체크
 			User_File_Grammar_Error_Line.push_back(lineCount);
 			continue;
+		}
+		else {
+			if (UIDs.find(data[0]) != UIDs.end()) { // 학번(교번) 중복 체크
+				is_duplicated_UID = true;
+			}
+			UIDs[data[0]].push_back(lineCount);
 		}
 
 		if (data[0].substr(0, 4).compare(L"0000") == 0) { // 관리자인 경우
@@ -95,10 +99,8 @@ void check_User_File() {
 					User_File_Grammar_Error_Line.push_back(lineCount);
 					continue;
 				}
+				admin_count++; // 관리자 수 카운트
 			}
-			/*gotoClassic;
-			cout << "관리자입니다." << endl;
-			gotoUTF;*/
 		}
 		else { // 학생인 경우
 			if (data.size() != 5) { // 요소 5개인지 체크
@@ -123,9 +125,6 @@ void check_User_File() {
 					continue;
 				}
 			}
-			/*gotoClassic;
-			cout << "학생입니다." << endl;
-			gotoUTF;*/
 		}
 
 		//for (int i = 0; i < data.size(); i++) {
@@ -134,14 +133,45 @@ void check_User_File() {
 		//cout << endl;
 	}
 
+	// 오류 메세지 출력 부분
 	gotoClassic;
-	int num_Error = User_File_Grammar_Error_Line.size();
-	if (num_Error != 0) {
+	int num_G_error = User_File_Grammar_Error_Line.size();
+	if (num_G_error != 0) { // 문법 오류 있는 경우
 		printf("오류 : 사용자 데이터 파일의 문법 규칙이 올바르지 않습니다.\n# ");
-		for (int i = 0; i < num_Error; i++) {
+		for (int i = 0; i < num_G_error; i++) {
 			printf("%d행", User_File_Grammar_Error_Line[i]);
-			(i == num_Error - 1) ? printf("\n") : printf(",");
+			(i == num_G_error - 1) ? printf("\n") : printf(",");
 		}
+		printf("프로그램을 종료합니다.\n");
+	}
+	else if (is_duplicated_UID || admin_count == 0) { // 의미 오류 있는 경우
+		printf("오류 : 사용자 데이터 파일의 의미 규칙이 올바르지 않습니다.\n");
+
+		// 겹치는 학번(교번) 있으면 출력
+		for (auto it : UIDs) {
+			if (it.second.size() != 1) {
+				wcout << "\"" << it.first << "\"";
+
+				if (it.first.substr(0, 4).compare(L"0000") == 0) {
+					printf("교번이 중복해서 존재합니다.\n# ");
+				}
+				else {
+					printf("학번이 중복해서 존재합니다.\n# ");
+				}
+
+				for (int i = 0; i < it.second.size(); i++) {
+					printf("%d행", it.second[i]);
+					(i == it.second.size() - 1) ? printf("\n") : printf(",");
+				}
+			}
+		}
+
+		// 관리자 없으면 출력
+		if (admin_count == 0) {
+			printf("관리자가 한 명도 존재하지 않습니다.\n");
+		}
+
+		printf("프로그램을 종료합니다.\n");
 	}
 }
 
@@ -152,7 +182,6 @@ bool check_UID(wstring const& str) {
 	if (!regex_match(str, id_reg)) {
 		return false;
 	}
-
 	return true;
 }
 
@@ -164,7 +193,6 @@ bool check_Uname(wstring const& str) {
 	if (!regex_match(str, name_reg)) {
 		return false;
 	}
-
 	return true;
 }
 
@@ -196,12 +224,17 @@ bool check_Acquisition_Credit(wstring const& str) {
 	if (!regex_match(str, grade_reg)) {
 		return false;
 	}
-	
+
 	// 200이하여야 함
 	int num = stoi(str);
 	if (num > 200) {
 		return false;
 	}
-
 	return true;
+}
+
+wstring& trim(wstring& s, const wchar_t* t) {
+	s.erase(0, s.find_first_not_of(t));
+	s.erase(s.find_last_not_of(t) + 1);
+	return s;
 }
