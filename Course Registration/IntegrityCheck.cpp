@@ -40,6 +40,7 @@ map<wstring, vector<int>> UIDs; // <학번(교번), 해당하는 행들>
 void check_File_Exist();
 void check_Subject_File();
 void check_User_File();
+void print_Errors();
 
 bool check_SID(wstring const& str);
 bool check_Sname(wstring const& str);
@@ -65,6 +66,7 @@ void Integrity_Check() {
 	check_File_Exist();
 	check_Subject_File();
 	check_User_File();
+	print_Errors();
 }
 
 void check_File_Exist() {
@@ -170,54 +172,7 @@ void check_Subject_File() {
 		
 		Subject[stoi(data[0])] = tmp;
 	}
-
-	// 오류 메세지 출력 부분
 	gotoClassic;
-	int num_G_error = Subject_File_Grammar_Error_Line.size();
-	if (num_G_error != 0) { // 문법 오류 있는 경우
-		printf("오류 : 과목 데이터 파일의 문법 규칙이 올바르지 않습니다.\n# ");
-		for (int i = 0; i < num_G_error; i++) {
-			printf("%d행", Subject_File_Grammar_Error_Line[i]);
-			(i == num_G_error - 1) ? printf("\n") : printf(",");
-		}
-		printf("프로그램을 종료합니다.\n");
-	}
-	else if (is_duplicated_SID || is_unmatched_major_grade) { // 의미 오류 있는 경우
-		printf("오류 : 과목 데이터 파일의 의미 규칙이 올바르지 않습니다.\n");
-
-		//겹치는 과목번호 있으면 출력
-		for (auto it : SIDs) {
-			if (it.second.size() != 1) {
-				wcout << "\"" << it.first << "\""<<"과목번호가 중복해서 존재합니다.\n# ";
-				for (int i = 0; i < it.second.size(); i++) {
-					printf("%d행", it.second[i]);
-					(i == it.second.size() - 1) ? printf("\n") : printf(",");
-				}
-			}
-		}
-
-		// 교양인데 학년이 0이 아닌 행 있으면 출력
-		int error_size = nonzero_liberal_arts_lines.size();
-		if (error_size != 0) {
-			printf("전공/교양이 \"교양\"인데 학년이 0이 아닌 행이 존재합니다.\n# ");
-			for (int i = 0; i < error_size; i++) {
-				printf("%d행", nonzero_liberal_arts_lines[i]);
-				(i == error_size - 1) ? printf("\n") : printf(",");
-			}
-		}
-
-		// 교양이 아닌데 학년이 0인 행 있으면 출력
-		error_size = zero_major_lines.size();
-		if (error_size != 0) {
-			printf("전공/교양이 \"교양\"이 아닌데 학년이 0인 행이 존재합니다.\n# ");
-			for (int i = 0; i < error_size; i++) {
-				printf("%d행", zero_major_lines[i]);
-				(i == error_size - 1) ? printf("\n") : printf(",");
-			}
-		}
-
-		printf("프로그램을 종료합니다.\n");
-	}
 }
 
 void check_User_File() {
@@ -303,19 +258,70 @@ void check_User_File() {
 		//}
 		//cout << endl;
 	}
-
-	// 오류 메세지 출력 부분
 	gotoClassic;
-	int num_G_error = User_File_Grammar_Error_Line.size();
+}
+
+void print_Errors() {
+	bool has_Error = false;
+
+	// 과목 데이터 파일 오류
+	int num_G_error = Subject_File_Grammar_Error_Line.size();
 	if (num_G_error != 0) { // 문법 오류 있는 경우
+		has_Error = true;
+		printf("오류 : 과목 데이터 파일의 문법 규칙이 올바르지 않습니다.\n# ");
+		for (int i = 0; i < num_G_error; i++) {
+			printf("%d행", Subject_File_Grammar_Error_Line[i]);
+			(i == num_G_error - 1) ? printf("\n") : printf(",");
+		}
+	}
+	else if (is_duplicated_SID || is_unmatched_major_grade) { // 의미 오류 있는 경우
+		has_Error = true;
+		printf("오류 : 과목 데이터 파일의 의미 규칙이 올바르지 않습니다.\n");
+
+		//겹치는 과목번호 있으면 출력
+		for (auto it : SIDs) {
+			if (it.second.size() != 1) {
+				wcout << "\"" << it.first << "\"" << "과목번호가 중복해서 존재합니다.\n# ";
+				for (int i = 0; i < it.second.size(); i++) {
+					printf("%d행", it.second[i]);
+					(i == it.second.size() - 1) ? printf("\n") : printf(",");
+				}
+			}
+		}
+
+		// 교양인데 학년이 0이 아닌 행 있으면 출력
+		int error_size = nonzero_liberal_arts_lines.size();
+		if (error_size != 0) {
+			printf("전공/교양이 \"교양\"인데 학년이 0이 아닌 행이 존재합니다.\n# ");
+			for (int i = 0; i < error_size; i++) {
+				printf("%d행", nonzero_liberal_arts_lines[i]);
+				(i == error_size - 1) ? printf("\n") : printf(",");
+			}
+		}
+
+		// 교양이 아닌데 학년이 0인 행 있으면 출력
+		error_size = zero_major_lines.size();
+		if (error_size != 0) {
+			printf("전공/교양이 \"교양\"이 아닌데 학년이 0인 행이 존재합니다.\n# ");
+			for (int i = 0; i < error_size; i++) {
+				printf("%d행", zero_major_lines[i]);
+				(i == error_size - 1) ? printf("\n") : printf(",");
+			}
+		}
+	}
+
+	// 사용자 데이터 파일 오류
+	num_G_error = User_File_Grammar_Error_Line.size();
+	if (num_G_error != 0) { // 문법 오류 있는 경우
+		has_Error = true;
 		printf("오류 : 사용자 데이터 파일의 문법 규칙이 올바르지 않습니다.\n# ");
 		for (int i = 0; i < num_G_error; i++) {
 			printf("%d행", User_File_Grammar_Error_Line[i]);
 			(i == num_G_error - 1) ? printf("\n") : printf(",");
 		}
-		printf("프로그램을 종료합니다.\n");
 	}
 	else if (is_duplicated_UID || admin_count == 0) { // 의미 오류 있는 경우
+		has_Error = true;
 		printf("오류 : 사용자 데이터 파일의 의미 규칙이 올바르지 않습니다.\n");
 
 		// 겹치는 학번(교번) 있으면 출력
@@ -341,8 +347,11 @@ void check_User_File() {
 		if (admin_count == 0) {
 			printf("관리자가 한 명도 존재하지 않습니다.\n");
 		}
+	}
 
-		printf("프로그램을 종료합니다.\n");
+	if (has_Error) {
+		cout << "프로그램을 종료합니다." << endl;
+		exit(0);
 	}
 }
 
