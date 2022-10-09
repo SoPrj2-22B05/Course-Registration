@@ -10,8 +10,12 @@
 using namespace std;
 
 void Logout(string command) {
-	if (command.empty() == 0)
+	if (command.empty() == 0) {
 		cout << "문법 형식에 위배됩니다. (인자가 없어야 함)" << endl;
+	}
+	if (command.empty() == 1) {
+		//사용자 프롬포트로 돌아가는 함수 호출
+	}
 }
 void Search(string command) {
 	

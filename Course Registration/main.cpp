@@ -9,7 +9,7 @@
 using namespace std;
 
 int main() {
-	/*
+	
 	Integrity_Check();
 	cout << "================ 과목 데이터 테스트 출력 ================" << endl;
 	for (int i = 0; i < 10000; i++) {
@@ -22,15 +22,14 @@ int main() {
 			cout << Subject[i]->time << " ";
 			cout << Subject[i]->max << endl;
 		}
-	}*/
+	}
 
 
 	//학생 프롬프트에서 입력한다고 가정
 	//find 컴퓨터회로/컴퓨터공학부/3/0123 이런 식으로 입력하면
-	//command[0] = find
-	//command[1] = 컴퓨터회로/컴퓨터공학부/3/0123
-	// 이렇게 들어감
-
+	//arr[0] = find
+	//arr[1] = 컴퓨터회로/컴퓨터공학부/3/0123
+	//이렇게 들어감
 	string Input;
 	getline(cin, Input);
 	stringstream stream;
@@ -42,12 +41,14 @@ int main() {
 		arr[i] = token;
 		i++;
 	}
-
-	if (arr[0] == "find") {
+	//검색 및 로그아웃 명령어에 따라 해당 함수 호출
+	if (arr[0] == "find" || arr[0] == "f" || arr[0] == "#" || arr[0] == "검색" || arr[0] == "ㄱㅅ") {
 		Search(arr[1]);
 	}
-	if (arr[0] == "logout") {
+
+	if (arr[0] == "logout" || arr[0] == "l" || arr[0] =="." || arr[0] =="로그아웃" || arr[0] =="ㄹㄱㅇㅇ") {
 		Logout(arr[1]);
 	}
+
 	return 0;
 }
