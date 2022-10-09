@@ -1,5 +1,6 @@
 #pragma once
 #include "IntegrityCheck.h"
+#include "SubjectData.h"
 
 #include <filesystem>
 #include <iostream>
@@ -18,6 +19,9 @@
 using namespace std;
 
 
+
+
+SubjectData* Subject[10000];
 
 vector<int> Subject_File_Grammar_Error_Line;
 vector<int> User_File_Grammar_Error_Line;
@@ -153,6 +157,18 @@ void check_Subject_File() {
 		//	wcout << data[i] + L" + ";
 		//}
 		//cout << endl;
+
+		// 데이터 배열에 추가
+		SubjectData* tmp = new SubjectData();
+		tmp->id = wstr2str(data[0]);
+		tmp->name = wstr2str(data[1]);
+		tmp->credit = stoi(data[2]);
+		tmp->major = wstr2str(data[3]);
+		tmp->grade = stoi(data[4]);
+		tmp->time = wstr2str(data[5]);
+		tmp->max = stoi(data[6]);
+		
+		Subject[stoi(data[0])] = tmp;
 	}
 
 	// 오류 메세지 출력 부분

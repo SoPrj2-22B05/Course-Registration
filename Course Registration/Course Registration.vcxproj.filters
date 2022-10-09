@@ -39,5 +39,8 @@
     <ClInclude Include="Administrator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SubjectData.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

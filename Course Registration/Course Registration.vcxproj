@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="IntegrityCheck.h" />
     <ClInclude Include="Administrator.h" />
+    <ClInclude Include="SubjectData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
