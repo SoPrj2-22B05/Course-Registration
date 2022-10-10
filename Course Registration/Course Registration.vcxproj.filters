@@ -27,10 +27,12 @@
     <ClCompile Include="Search.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="과목 데이터 파일.txt" />
-    <Text Include="사용자 데이터 파일.txt" />
+    <ClCompile Include="Add.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Delete.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IntegrityCheck.h">
@@ -45,5 +47,15 @@
     <ClInclude Include="Search.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Add.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Delete.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="과목 데이터 파일.txt" />
+    <Text Include="사용자 데이터 파일.txt" />
   </ItemGroup>
 </Project>

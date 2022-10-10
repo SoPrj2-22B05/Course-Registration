@@ -1,7 +1,6 @@
 #pragma once
 #include "IntegrityCheck.h"
 #include "SubjectData.h"
-
 #include <filesystem>
 #include <iostream>
 #include <fstream>
@@ -17,9 +16,6 @@
 #define gotoClassic locale::global(locale::classic());
 
 using namespace std;
-
-
-
 
 SubjectData* Subject[10000];
 
