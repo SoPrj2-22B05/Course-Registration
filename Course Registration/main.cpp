@@ -23,19 +23,20 @@ int main() {
 			cout << Subject[i]->max << endl;
 		}
 	}
-
-
+	
+	
 	//학생 프롬프트에서 입력한다고 가정
 	//find 컴퓨터회로/컴퓨터공학부/3/0123 이런 식으로 입력하면
 	//arr[0] = find
 	//arr[1] = 컴퓨터회로/컴퓨터공학부/3/0123
 	//이렇게 들어감
+
 	string Input;
 	getline(cin, Input);
 	stringstream stream;
 	stream.str(Input);
 	string token;
-	string arr[2] = {"0"};
+	string arr[3] = {"0"};
 	int i = 0;
 	while (stream >> token) {
 		arr[i] = token;
@@ -51,4 +52,5 @@ int main() {
 	}
 
 	return 0;
+	
 }
