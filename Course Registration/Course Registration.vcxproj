@@ -128,7 +128,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Add.cpp" />
     <ClCompile Include="Administrator.cpp" />
+    <ClCompile Include="Delete.cpp" />
     <ClCompile Include="IntegrityCheck.cpp">
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -141,15 +143,24 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Text Include="과목 데이터 파일.txt" />
     <Text Include="사용자 데이터 파일.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttendanceStudentData.h" />
+=======
+    <ClInclude Include="Add.h" />
+    <ClInclude Include="Delete.h" />
+>>>>>>> 74d47acc41d69e3f0dc04becb3eb6005cd187ada
     <ClInclude Include="IntegrityCheck.h" />
     <ClInclude Include="Administrator.h" />
     <ClInclude Include="Search.h" />
     <ClInclude Include="SubjectData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="과목 데이터 파일.txt" />
+    <Text Include="사용자 데이터 파일.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
