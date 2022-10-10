@@ -36,7 +36,7 @@ int main() {
 	stringstream stream;
 	stream.str(Input);
 	string token;
-	string arr[3] = { "0" };
+	string arr[2] = {"0"};
 	int i = 0;
 	while (stream >> token) {
 		arr[i] = token;

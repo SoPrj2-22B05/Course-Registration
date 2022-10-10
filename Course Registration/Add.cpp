@@ -44,7 +44,6 @@ void Add(string command) {
 		while (f1.peek()!=EOF) {
 			getline(f1, line);
 			string tmpid = line.substr(0, 4);
-			if (tmpid == "")continue;
 			string tmpmlg = line.substr(4);
 			mileage_sum += stoi(tmpmlg);
 			if (tmpid == id) { // 사용자 중복 체크
