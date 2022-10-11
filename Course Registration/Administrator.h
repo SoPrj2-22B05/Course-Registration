@@ -21,3 +21,5 @@ void FifthPriority(vector<Student>& candidate, size_t& remainMax, wstring filena
 void SixthPriority(vector<Student>& candidate, size_t& remainMax, wstring filename);
 void PrintCandidateInfo(vector<Student>& candidateVec);
 void FinalizeAttendanceBook(vector<Student>& v1, wstring filename, bool addEnd);
+wstring& trimFunc(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
+wstring stringTOwstring(string src);

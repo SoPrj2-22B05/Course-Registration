@@ -7,10 +7,8 @@
 
 using namespace std;
 
-wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
-wstring stringTOwstring(string src);
+
 //string wstringTOstring(wstring src);
-SubjectData* Subject[10000];
 bool addEnd = false;
 
 //기본적으로 "Course_Registration_On_Off.txt" 파일이 존재해야 함
@@ -60,7 +58,7 @@ tryAgain:
 	}
 	else if ((adminCommand.compare("시작") == 0) || (adminCommand.compare("start") == 0)) {
 		StartOrEnd(START);
-		return;
+		goto tryAgain;
 	}
 	else if ((adminCommand.compare("종료") == 0) || (adminCommand.compare("end") == 0)) {
 		bool isEnd = false;
@@ -70,7 +68,7 @@ tryAgain:
 		}
 
 		// 전체 프로그램을 종료
-
+		exit(0);
 	}
 	else {
 		cout << "------------------------------------------------------------------" << endl;
@@ -129,11 +127,10 @@ bool StartOrEnd(int command) {
 }
 
 void Prioritizing() { //우선순위 정하는 함수
-	for (int i = 0; i < 1; i++) {	//과목번호 0000부터 9999까지
+	for (int i = 0; i < 10000; i++) {	//과목번호 0000부터 9999까지
 		addEnd = false;
 		wstring subjectID, subjectName, major;
 		int grade, max;
-		/*
 		if (Subject[i] == NULL) continue;	//해당 과목번호를 가지는 과목 없으면 건너뜀
 		else {								//과목 이름, 학년, 정원을 가지고 옴
 			locale::global(locale("ko_KR.UTF-8"));
@@ -143,14 +140,14 @@ void Prioritizing() { //우선순위 정하는 함수
 			grade = Subject[i]->grade;
 			max = Subject[i]->max;
 		}
-		*/
 		//	Subject안에 내용이 안채워진 상태로 테스트하기 위한 데이터 (바로 위 else블록 주석처리하고 이걸 주석해제)
+		/*
 		subjectID = L"0000";
 		subjectName = L"전기프";
 		major = L"테스트학과";
 		grade = 2;
 		max = 4;
-
+		*/
 		locale::global(locale("ko_KR.UTF-8"));
 		wstring filename = subjectID + L"_" + subjectName + L"_출석부.txt";
 		wfstream f(filename);
@@ -167,7 +164,7 @@ void Prioritizing() { //우선순위 정하는 함수
 				data.clear();
 				ss.clear();
 				// 비어있는 행인지 체크
-				line = trim(line);
+				line = trimFunc(line);
 				if (line.compare(L"") == 0) {
 					cout << "출석부 파일에 빈 행이 존재" << endl;
 					continue;
@@ -175,7 +172,7 @@ void Prioritizing() { //우선순위 정하는 함수
 				//data라는 vector에 wstring형태로 학번, 이름, 마일리지 넣음
 				ss.str(line);
 				while (getline(ss, str, L'\t')) {
-					str = trim(str);
+					str = trimFunc(str);
 					if (str != L"") {
 						data.push_back(str);
 					}
@@ -224,10 +221,10 @@ void FirstPriority(vector<Student>& studentsWhoApplied, int& max, int& subGrade,
 	//PrintCandidateInfo(studentsWhoApplied);
 	vector<Student> candidateVec;		//출석부에 적을 확정된 학생들 vector
 	vector<Student> definiteVec;		//추가 우선순위 정해야 할 후보 학생들 vector
-	if (mileageVec[max - 1] != mileageVec[max]) {
+	if (mileageVec[(long long)(max - 1)] != mileageVec[max]) {
 		//max까지만 출석부에 저장하고 끝 (mileageVec[max-1] 보다 크거나 같은 마일리지 가진 학생만 추가)
 		for (int i = 0; i < studentsWhoApplied.size(); i++) {
-			if (studentsWhoApplied[i].GetMileage() >= mileageVec[max - 1]) {
+			if (studentsWhoApplied[i].GetMileage() >= mileageVec[(long long)(max - 1)]) {
 				definiteVec.push_back(studentsWhoApplied[i]);
 			}
 		}
@@ -237,10 +234,10 @@ void FirstPriority(vector<Student>& studentsWhoApplied, int& max, int& subGrade,
 	else {
 		size_t remainMax;
 		for (int i = 0; i < studentsWhoApplied.size(); i++) {
-			if (studentsWhoApplied[i].GetMileage() > mileageVec[max - 1]) {
+			if (studentsWhoApplied[i].GetMileage() > mileageVec[(long long)(max - 1)]) {
 				definiteVec.push_back(studentsWhoApplied[i]);
 			}
-			else if (studentsWhoApplied[i].GetMileage() == mileageVec[max - 1]) {
+			else if (studentsWhoApplied[i].GetMileage() == mileageVec[(long long)(max - 1)]) {
 				candidateVec.push_back(studentsWhoApplied[i]);
 			}
 		}
@@ -285,17 +282,17 @@ void SecondPriority(vector<Student>& candidate, size_t& remainMax, int& subGrade
 			locale::global(locale("ko_KR.UTF-8"));
 			data.clear();
 			ss.clear();
-			line = trim(line);
+			line = trimFunc(line);
 			ss.str(line);
 			getline(ss, str, L'\t');
-			str = trim(str);
+			str = trimFunc(str);
 			//여기까지 했을 때 str은 학번(또는 교번)
 			//교번인 0000으로 시작하는 것은 for문 들어가기전에 거르면 좋음 - 추후 추가
 			for (int i = 0; i < candidate.size(); i++) {
 				if (str.compare(candidate[i].GetStudentNum()) == 0) {
 					getline(ss, str, L'\t');			//이름은 이미 갖고 있는 데이터라 건너뛰려고 한 번 읽음
 					while (getline(ss, str, L'\t')) {	//data에 전공, 학년, 취득학점 들어감
-						str = trim(str);
+						str = trimFunc(str);
 						if (str != L"") {
 							data.push_back(str);
 						}
@@ -576,28 +573,30 @@ void PrintCandidateInfo(vector<Student>& candidateVec) {
 void FinalizeAttendanceBook(vector<Student>& v1, wstring filename, bool addEnd) {
 	locale::global(locale("ko_KR.UTF-8"));
 
+	int i;
 	if (addEnd) {
 		wfstream f(filename);
 		f.seekg(0, ios::end);
-		f << "\n";
-		for (int i = 0; i < v1.size() - 1; i++) {
+		f << L"\n";
+		for (i = 0; i < v1.size() - 1; i++) {
 			f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName() << endl;
 		}
-		f << v1[v1.size() - 1].GetStudentNum() << L"\t" << v1[v1.size() - 1].GetStudentName();
+		f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName();
 		f.close();
 	}
 	else {
 		wfstream f(filename, ios::out);
-		for (int i = 0; i < v1.size() - 1; i++) {
+		if (f.is_open()) cout << "열림" << endl;
+		for (i = 0; i < v1.size() - 1; i++) {
 			f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName() << endl;
 		}
-		f << v1[v1.size() - 1].GetStudentNum() << L"\t" << v1[v1.size() - 1].GetStudentName();
+		f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName();
 		f.close();
 	}
 
 }
 
-wstring& trim(wstring& s, const wchar_t* t) {
+wstring& trimFunc(wstring& s, const wchar_t* t) {
 	s.erase(0, s.find_first_not_of(t));
 	s.erase(s.find_last_not_of(t) + 1);
 	return s;
@@ -612,12 +611,5 @@ wstring stringTOwstring(string src) {
 string wstringTOstring(wstring src) {
 	USES_CONVERSION;
 	return W2A(src.c_str());
-}
-*/
-
-/*
-int main(void) {
-	Administrator_menu();
-	return 0;
 }
 */
