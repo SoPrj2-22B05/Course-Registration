@@ -4,6 +4,7 @@
 #include "Search.h"
 #include "Add.h"
 #include "Delete.h"
+#include "Alter.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -36,7 +37,7 @@ int main() {
 	stringstream stream;
 	stream.str(Input);
 	string token;
-	string arr[2] = {"0"};
+	string arr[3] = { "0" };
 	int i = 0;
 	while (stream >> token) {
 		arr[i] = token;
@@ -51,13 +52,16 @@ int main() {
 		Logout(arr[1]);
 	}
 
-	else if (arr[0] == "add" || arr[0] == "a" || arr[0] == "+" || arr[0] == "추가" || arr[0] == "ㅊㄱ") {
+	else if (arr[0] == "add" || arr[0] == "ad" || arr[0] == "+" || arr[0] == "추가" || arr[0] == "ㅊㄱ") {
 		Add(arr[1]);
 	}
 
 	else if(arr[0] == "delete" || arr[0] == "d" || arr[0] == "-" || arr[0] == "삭제" || arr[0] == "ㅅㅈ") {
 		Delete(arr[1]);
 	}
-
+	
+	else if (arr[0] == "alter" || arr[0] == "alt" || arr[0] == "~" || arr[0] == "변경" || arr[0] == "ㅂㄱ") {
+		Alter(arr[1]);
+	}
 	return 0;
 }
