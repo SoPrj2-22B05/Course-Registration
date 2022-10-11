@@ -29,6 +29,9 @@ void Add(string command) {
 	}
 	id = adds[0];
 	mileage = adds[1];
+	if (mileage.size() == 1) {
+		mileage = "0" + mileage;
+	}
 	mileage_sum = stoi(mileage);
 
 	// 존재하는 과목인지 체크

@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="Add.cpp" />
     <ClCompile Include="Administrator.cpp" />
+    <ClCompile Include="Alter.cpp" />
     <ClCompile Include="Delete.cpp" />
     <ClCompile Include="IntegrityCheck.cpp">
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Add.h" />
+    <ClInclude Include="Alter.h" />
     <ClInclude Include="Delete.h" />
     <ClInclude Include="IntegrityCheck.h" />
     <ClInclude Include="Administrator.h" />
@@ -149,8 +151,8 @@
     <ClInclude Include="SubjectData.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="과목 데이터 파일.txt" />
-    <Text Include="사용자 데이터 파일.txt" />
+    <Text Include="..\..\..\..\..\Desktop\과목 데이터 파일.txt" />
+    <Text Include="..\..\..\..\..\Desktop\사용자 데이터 파일.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
