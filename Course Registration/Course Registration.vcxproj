@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Add.h" />
     <ClInclude Include="Alter.h" />
+    <ClInclude Include="AttendanceStudentData.h" />
     <ClInclude Include="Delete.h" />
     <ClInclude Include="IntegrityCheck.h" />
     <ClInclude Include="Administrator.h" />

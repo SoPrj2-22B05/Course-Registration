@@ -59,6 +59,9 @@
     <ClInclude Include="Alter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="AttendanceStudentData.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\..\Desktop\과목 데이터 파일.txt" />
