@@ -145,6 +145,7 @@
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="prompt.cpp" />
     <ClCompile Include="Search.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -156,6 +157,7 @@
     <ClInclude Include="Delete.h" />
     <ClInclude Include="IntegrityCheck.h" />
     <ClInclude Include="Administrator.h" />
+    <ClInclude Include="prompt.h" />
     <ClInclude Include="Search.h" />
     <ClInclude Include="SubjectData.h" />
   </ItemGroup>
