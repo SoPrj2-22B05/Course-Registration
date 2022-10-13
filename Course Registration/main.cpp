@@ -27,7 +27,7 @@ int main() {
 			cout << Subject[i]->max << endl;
 		}
 	}
-	User_info_menu();
+	while (true) { User_info_menu(); }
 	/*
 	//학생 프롬프트에서 입력한다고 가정
 	//find 컴퓨터회로/컴퓨터공학부/3/0123 이런 식으로 입력하면

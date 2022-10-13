@@ -50,8 +50,8 @@ bool addEnd = false;
 */
 void Administrator_menu() {
 	string adminCommand;
-
 tryAgain:
+	cout << "Course Registration>";
 	cin >> adminCommand;
 	if ((adminCommand.compare("·Î±×¾Æ¿ô") == 0) || (adminCommand.compare("logout") == 0)) {
 		return;
