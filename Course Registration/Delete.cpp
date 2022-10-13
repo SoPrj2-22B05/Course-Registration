@@ -49,7 +49,13 @@ void Delete(string command) {
 		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다.";
 		return;
 	}
-	remove(filename1.c_str());
+	cout << "정말 삭제하시겠습니까? (Yes/...)";
+	string dcheck;
+	cin >> dcheck;
+	if (dcheck == "yes") {
+		remove(filename1.c_str());
+	}
+	else return;
 
 	wofstream f3;
 	f3.imbue(locale("ko_KR.UTF-8"));
@@ -62,7 +68,6 @@ void Delete(string command) {
 		f3.close();
 	}
 
-	pos = -1;
 	lines.clear();
 	vector<wstring>().swap(lines);
 
@@ -84,10 +89,6 @@ void Delete(string command) {
 		check = false;
 		lineCount = 0;
 	}
-	if (pos == -1) {
-		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다.";
-		return;
-	}
 	remove(filename2.c_str());
 
 	if (lines.size()>1) {
@@ -102,5 +103,6 @@ void Delete(string command) {
 			f4.close();
 		}
 	}
+	cout << "성공적으로 삭제되었습니다." << endl;
 	return;
 }

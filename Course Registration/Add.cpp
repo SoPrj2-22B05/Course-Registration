@@ -123,7 +123,7 @@ void Add(string command) {
 	wfstream f3;
 	f3.imbue(locale("ko_KR.UTF-8"));
 	f3.open(filename1, ios::app);
-	cout << "정말 추가하시겠습니까? (yes/no)";
+	cout << "이대로 추가하시겠습니까? (Yes/...)";
 	cin >> check;
 
 	if (check == "yes") {
@@ -133,6 +133,7 @@ void Add(string command) {
 		f3 << wid + L'\t' + wmileage + L'\n';
 		f2.close();
 		f3.close();
+		cout << "성공적으로 추가되었습니다!" << endl;
 		return;
 	}
 	else return;

@@ -24,6 +24,7 @@ void Alter(string command) {
 	string check;
 	wstring line;
 	int mileage_sum;
+	int find_mileage;
 	bool find_id=false;
 	int back = 18 + studentname.length();
 
@@ -52,31 +53,42 @@ void Alter(string command) {
 		cout << "오류 : 존재하지 않는 과목입니다.";
 		return;
 	}
+	// 마일리지 오류
+	if (stoi(mileage) > 36) {
+		cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다.";
+		return;
+	}
 
+	// 마일리지 저장 과정
 	string filename1 = studentid + '_' + studentname + "_수강신청목록.txt";
 	wfstream f1;
 	f1.imbue(locale("ko_KR.UTF-8"));
 	f1.open(filename1);
-	if (f1.is_open()) { 
+	if (f1.is_open()) {
+		while (getline(f1, line)) {
+			wstring tmpmlg = line.substr(4);
+			mileage_sum += stoi(tmpmlg);
+		}
+		f1.close();
+	}
+	f1.open(filename1);
+	if (f1.is_open()) {
 		while (getline(f1, line)) {
 			wstring tmpid = line.substr(0, 4);
 			wstring tmpmlg = line.substr(4);
-			mileage_sum += stoi(tmpmlg);
 			if (tmpid == wid) { // 사용자 파일에 존재
 				mileage_sum -= stoi(tmpmlg);
-				// 마일리지 체크는 중간에 해야할듯!
+				mileage_sum += stoi(mileage);
 				if (mileage_sum > 72) {
 					cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다.";
 					return;
 				}
-				if (stoi(mileage) > 36) {
-					cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다.";
-					return;
-				}
 				find_id = true;
-				cout << "정말 변경하시겠습니까? (yes/no)";
+				cout << "[" << id << "] " << Subject[stoi(id)]->name << " " << stoi(tmpmlg) << "->" << mileage << "마일리지로 변경" << endl;
+				cout << "이대로 변경하시겠습니까? (Yes/...)";
 				cin >> check;
 				if (check == "yes") {
+					cout << "성공적으로 변경되었습니다!" << endl;
 					f1.seekg(-9, ios::cur);
 					f1 << wid + L'\t' + wmileage + L'\n';
 					f1.seekg(9, ios::cur);
