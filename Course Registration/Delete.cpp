@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -5,6 +6,8 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <locale.h>
+#include <codecvt>
 #include "SubjectData.h"
 using namespace std;
 
@@ -12,45 +15,92 @@ void Delete(string command) {
 	string studentid = "202111312";
 	string studentname = "송현우";
 	string id = command;
-	string line;
+	wstring line;
+	bool check = false;
+	int pos=-1;
+	int back = 36 + studentname.length();
 	int lineCount = 0;
-	int pos;
+	vector<wstring>lines;
 
-	// 그냥 삭제만 하면 안되고 이어 붙여야함... 미완
+	wstring wstuid, wid;
+	wstuid.assign(studentid.begin(), studentid.end());
+	wid.assign(id.begin(), id.end());
+	string subname = Subject[stoi(id)]->name;
 
-	fstream f1(studentid + "_" + studentname + "_수강신청목록.txt", ios::in | ios::out);
+	string filename1 = studentid + '_' + studentname + "_수강신청목록.txt";
+	wfstream f1;
+	f1.imbue(locale("ko_KR.UTF-8"));
+	f1.open(filename1);
 	if (f1.is_open()) {
-		while (f1.peek() != EOF) {
-			lineCount++;
-			getline(f1, line);
-			string tmpid = line.substr(0, 4);
-			if (tmpid == id) {
+		while (getline(f1, line)) {
+			lines.push_back(line);
+			wstring tmpid = line.substr(0, 4);
+			if (tmpid == wid) {
+				check = true;
 				pos = lineCount;
-				/*f1.seekg(0, f1.end);
-				int length = f1.tellg();
-				f1.seekg(0, f1.beg);
-				char* buffer = new char[length];
-				f1.read(buffer, length);
-				cout << buffer;*/
-
-				lineCount = 0;
-				f1.close();
-				fstream f2(id + "_" + Subject[stoi(id)]->name + "_출석부.txt", ios::in | ios::out);
-				while (f2.peek() != EOF) {
-					lineCount++;
-					getline(f2, line);
-					string tmpstuid = line.substr(0, 9);
-					if (tmpstuid == studentid) {
-						pos = lineCount;
-						f2.close();
-						cout << "과목 번호 <" << id << "> 삭제 완료";
-						return;
-					}
-				}
 			}
+			lineCount++;
 		}
-		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다.";
 		f1.close();
+		check = false;
+		lineCount = 0;
+	}
+	if (pos == -1) {
+		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다.";
 		return;
 	}
+	remove(filename1.c_str());
+
+	wofstream f3;
+	f3.imbue(locale("ko_KR.UTF-8"));
+	f3.open(filename1,ios::app);
+	if (f3.is_open()) {
+		for (int i = 0; i < lines.size(); i++) {
+			if (i == pos)continue;
+			else f3 << lines[i] << L'\n';
+		}
+		f3.close();
+	}
+
+	pos = -1;
+	lines.clear();
+	vector<wstring>().swap(lines);
+
+	string filename2 = id + '_' + subname + "_출석부.txt";
+	wfstream f2;
+	f2.imbue(locale("ko_KR.UTF-8"));
+	f2.open(filename2);
+	if (f2.is_open()) {
+		while (getline(f2, line)) {
+			lines.push_back(line);
+			wstring tmpstuid = line.substr(0, 9);
+			if (tmpstuid == wstuid) {
+				check = true;
+				pos = lineCount;
+			}
+			lineCount++;
+		}
+		f2.close();
+		check = false;
+		lineCount = 0;
+	}
+	if (pos == -1) {
+		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다.";
+		return;
+	}
+	remove(filename2.c_str());
+
+	if (lines.size()>1) {
+		wofstream f4;
+		f4.imbue(locale("ko_KR.UTF-8"));
+		f4.open(filename2, ios::app);
+		if (f4.is_open()) {
+			for (int i = 0; i < lines.size(); i++) {
+				if (i == pos)continue;
+				else f4 << lines[i] << L'\n';
+			}
+			f4.close();
+		}
+	}
+	return;
 }
