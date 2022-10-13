@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 #include <locale.h>
 #include <vector>
 #include <algorithm>
@@ -11,7 +12,7 @@
 using namespace std;
 
 void Administrator_menu();
-bool StartOrEnd(int command);
+bool StartOrEnd(boolean command);
 void Prioritizing();
 void FirstPriority(vector<Student>& v1, int& max, int& subGrade, wstring subMajor, wstring filename);
 void SecondPriority(vector<Student>& candidate, size_t& remainMax, int& subGrade, wstring subMajor, wstring filename);

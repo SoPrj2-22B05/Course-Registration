@@ -6,7 +6,7 @@
 #define END 0
 
 using namespace std;
-
+namespace fs = std::filesystem;
 
 //string wstringTOstring(wstring src);
 bool addEnd = false;
@@ -36,15 +36,15 @@ bool addEnd = false;
 */
 
 /*
-테스트할 때는 아래 내용을 "202018239 리처드파인만 수강신청목록.txt"에 복붙 (당연히 내용 수정해도 됨)
+테스트할 때는 아래 내용을 "202018239_리처드파인만_수강신청목록.txt"에 복붙 (당연히 내용 수정해도 됨)
 0000	28
 3867	14
 8751	30
-아래 내용을 "202067890 송강 수강신청목록.txt"에 복붙 (당연히 내용 수정해도 됨)
+아래 내용을 "202067890_송강_수강신청목록.txt"에 복붙 (당연히 내용 수정해도 됨)
 0000	28
 7777	17
 6666	16
-아래 내용을 "202098124 고인물건덕이 수강신청목록.txt"에 복붙 (당연히 내용 수정해도 됨)
+아래 내용을 "202098124_고인물건덕이_수강신청목록.txt"에 복붙 (당연히 내용 수정해도 됨)
 0000	28
 9143	18
 */
@@ -67,6 +67,8 @@ tryAgain:
 			Prioritizing();
 		}
 
+		//종료할 때 파일 삭제
+
 		// 전체 프로그램을 종료
 		exit(0);
 	}
@@ -82,47 +84,40 @@ tryAgain:
 	}
 }
 
-bool StartOrEnd(int command) {
-	fstream onOff;
-	onOff.open("Course_Registration_On_Off.txt", ios::in);
-	if (!onOff.is_open()) {
-		cout << "Course_Registration_On_Off.txt 파일 열기 실패" << endl;
+bool StartOrEnd(boolean command) {
+	wstring dir = fs::current_path();
+	wfstream isOn;
+	isOn.open(dir + L"\\Course_Registration_Is_On.txt");
+	if (!isOn.is_open()) {
+		if (command == START) {
+			//파일을 생성하고 수강신청 시작한다고 출력
+			isOn.close();
+			wofstream out(dir + L"\\Course_Registration_Is_On.txt");
+			out.close();
+			cout << "수강신청을 시작합니다." << endl;
+		}
+		else if (command == END) {
+			cout << "아직 수강신청이 시작되지 않았습니다." << endl;
+		}
 	}
 	else {
-		string state;
-		onOff >> state;		// Course_Registration_On_Off.txt의 on 또는 off 상태를 읽어와 저장
-		for (char& a : state) a = tolower(a);
-
-		if (state.compare("on") == 0) {
-			if (command == START) {
-				cout << "이미 수강신청이 시작되어 시작할 수 없습니다." << endl;
-			}
-			else if (command == END) {
-				onOff.close();
-				onOff.open("Course_Registration_On_Off.txt", ios::out);
-				onOff << "Off";
-				cout << "수강신청을 종료합니다." << endl;
-				onOff.close();
-				return true;	// 유일하게 true를 리턴
-			}
-
+		if (command == START) {
+			cout << "이미 수강신청이 시작되어 시작할 수 없습니다." << endl;
 		}
-		else if (state.compare("off") == 0) {
-			if (command == START) {
-				onOff.close();
-				onOff.open("Course_Registration_On_Off.txt", ios::out);
-				onOff << "On";
-				cout << "수강신청을 시작합니다." << endl;
-			}
-			else if (command == END) {
-				cout << "아직 수강신청이 시작되지 않았습니다." << endl;
-			}
+		else if (command == END) {
+			isOn.close();
+			fs::path p(dir + L"\\Course_Registration_Is_On.txt");
+			fs::remove(p);
+			cout << "수강신청을 종료합니다." << endl;
+			return true;	// 유일하게 true를 리턴
 		}
+		/*
 		else {
 			cout << "Course_Registration_On_Off.txt에 허용되지 않는 문자열이 입력되어있습니다." << endl;
 		}
+		*/
 	}
-	onOff.close();
+	isOn.close();
 	return false;
 }
 
@@ -140,7 +135,7 @@ void Prioritizing() { //우선순위 정하는 함수
 			grade = Subject[i]->grade;
 			max = Subject[i]->max;
 		}
-		//	Subject안에 내용이 안채워진 상태로 테스트하기 위한 데이터 (바로 위 else블록 주석처리하고 이걸 주석해제)
+		//	Subject안에 내용이 안채워진 상태로 테스트하기 위한 데이터 (바로 위 if,else블록 주석처리하고 이걸 주석해제)
 		/*
 		subjectID = L"0000";
 		subjectName = L"전기프";
@@ -432,7 +427,7 @@ void FourthPriority(vector<Student>& candidate, size_t& remainMax, wstring filen
 	int* appliedSubjectNum = new int[candidate.size()];
 	//학생별로 신청과목 파일 열어서 신청과목수 얻어야 함
 	for (int i = 0; i < candidate.size(); i++) {
-		wstring filename = candidate[i].GetStudentNum() + L" " + candidate[i].GetStudentName() + L" 수강신청목록.txt";
+		wstring filename = candidate[i].GetStudentNum() + L"_" + candidate[i].GetStudentName() + L"_수강신청목록.txt";
 		wfstream f(filename);
 		wstring line;		//빈 행 있는지 체크하는 코드 안 넣었음
 		if (f.is_open()) {

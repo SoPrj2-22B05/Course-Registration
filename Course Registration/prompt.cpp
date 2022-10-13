@@ -1,16 +1,18 @@
+#include "SubjectData.h"
+#include "Search.h"
+#include "Administrator.h"
+#include "Delete.h"
+#include "Alter.h"
+#include "Add.h"
 #include <iostream>
 #include <string>
 #include <algorithm>
 #include <sstream>
-#include "SubjectData.h"
-#include "Search.h"
-#include "Administrator.h"
 #define ORDER_NUM 5
 using namespace std;
 
 void User_info_menu();
 void Student_menu();
-void Adminisraor_menu();
 void print_manual();
 void add_check(string str);
 void del_check(string str);
@@ -25,7 +27,7 @@ void User_info_menu() {
     cout << "학번 (또는 교번)을 입력해주세요" << endl;
     cin >> ID;
     size_t npos;
-
+   
     npos = ID.find_first_not_of(' ');
     ID.erase(0, npos);
     npos = ID.find_last_not_of(' ');
@@ -62,10 +64,10 @@ void User_info_menu() {
                 return;
             }
         } //숫자로 구성되야함
-
+        
         if ((ID.substr(0, 4)).compare("0000") == 0) {
             cout << "관리자 주 프롬프트로 이동합니다" << endl;
-            Adminisraor_menu();
+            Administrator_menu();
         }
         else {
             cout << "학생 주 프롬프트로 이동합니다" << endl;
@@ -96,7 +98,7 @@ void Student_menu() {
     string del[ORDER_NUM] = { "delete", "d", "삭제", "ㅅㅈ", "-" };
     string alter[ORDER_NUM] = { "alter", "alt", "변경", "ㅂㄱ", "~" };
     string str;
-    cin >> str;
+    getline(cin, str);
     char separator = ' ';
     string stu_input[2];
     istringstream iss(str);
@@ -134,9 +136,6 @@ void Student_menu() {
     print_manual();
     Student_menu();
 }
-void Adminisraor_menu() {
-    Administrator_menu();
-} //따로 추가
 
 void add_check(string str) {
     char separator = '/';
@@ -202,6 +201,7 @@ void add_check(string str) {
         }
         int mile = stoi(parameter[1]);
     }//마일리지 0제거
+    Add(str);
 }
 void add_help_print() {
     cout << "원하는 과목을 수강신청 추가하는 명령어" << endl;
@@ -247,6 +247,7 @@ void del_check(string str)
             return;
         }
     } //숫자로 구성되야함
+    Delete(str);
 }
 void del_help_print() {
     cout << "삭제를 원하는 과목을 수강신청 취소하는 명령어" << endl;
@@ -319,6 +320,7 @@ void alter_check(string str)
         }
         int mile = stoi(parameter[1]);
     }//마일리지 0제거
+    Delete(str);
 }
 void alter_help_print() {
     cout << "이미 신청한 과목에 대해 분배한 마일리지를 변경하는 명령어" << endl;
