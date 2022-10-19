@@ -7,6 +7,7 @@
 #include <cctype>
 #include <algorithm>
 #include "SubjectData.h"
+#include "prompt.h"
 using namespace std;
 
 void Logout(string command) {
@@ -14,7 +15,7 @@ void Logout(string command) {
 		cout << "문법 형식에 위배됩니다. (인자가 없어야 함)" << endl;
 	}
 	if (command.empty() == 1) {
-		//사용자 프롬포트로 돌아가는 함수 호출
+		User_info_menu();
 	}
 }
 void Search(string command) {
@@ -51,7 +52,10 @@ void Search(string command) {
 		// 자른 문자열 중 과목번호, 과목이름, 학년, 전공/교양을 구분합니다.
 		for (auto search : searchs)
 		{
-			int i = 0;
+			//int i = 0;
+			//__int64 i = 0;
+			long double i = 0; // 이 경우엔 더 넓은 수의 범위까지 커버 가능함 2147483647을 초과하는 수가 들어가면 그것도 과목 이름으로 분류하기 때문에 long double을 써서 입력되는 범위의 값을 증가시킴
+
 			stringstream ssInt(search);
 			ssInt >> i;
 			if (!ssInt.fail()) //만약 문자열을 정수형으로 바꾸는데 성공하면 (즉, 과목번호나 학년을 입력하면)
@@ -71,7 +75,7 @@ void Search(string command) {
 					}
 
 				}
-				if (search.size() == 4) // 문자열의 길이가 4면 과목번호에 넣어줍니다.
+				else if (search.size() == 4) // 문자열의 길이가 4면 과목번호에 넣어줍니다.
 				{
 					if (id == "0")
 					{
@@ -85,35 +89,64 @@ void Search(string command) {
 						break;
 					}
 				}
-			}
-			else
-			{
-				if (search.substr(search.length() - 4) == "학과" || search.substr(search.length() - 4) == "학부" || search == "교양")
-				{
-					if (major == "0")
-					{
-						major = search;
-					}
-					else
-					{
-						sORf = false;
-						cout << "오류 : 검색요소가 중복됩니다." << endl;
-						cout << "'전공/교양' 검색요소가 중복해서 존재합니다." << endl;
-						break;
-					}
-				}
-				else
+				/*
+				else //숫자인 문자열의 길이가 1도 아니고 4도 아닐 경우 (2,3 또는 5  이상) 숫자를 과목 이름에 넣어줌
 				{
 					if (name == "0")
 					{
 						name = search;
 					}
-					else
+				}*/
+
+				else //숫자인 문자열의 길이가 1도 아니고 4도 아닐 경우
+				{
+					sORf = false;
+					cout << "오류 : 허용되지 않는 입력입니다.." << endl;
+					cout << "'과목이름' 검색요소엔 영어나 한글이 하나 이상 들어가야 합니다." << endl;
+					cout << "'과목번호' 검색요소는 4자리 숫자로만 이루어집니다." << endl;
+					cout << "'학년' 검색요소는 1자리 숫자로만 이루어집니다." << endl;
+					break;
+				}
+
+
+			}
+			else //문자열을 정수형으로 바꾸는데 실패 
+			{
+				if (search.length() >= 4) {
+					if (search.substr(search.length() - 4) == "학과" || search.substr(search.length() - 4) == "학부" || search == "교양")
 					{
-						sORf = false;
-						cout << "오류 : 검색요소가 중복됩니다." << endl;
-						cout << "'과목이름' 검색요소가 중복해서 존재합니다." << endl;
-						break;
+						if (major == "0")
+						{
+							major = search;
+						}
+						else
+						{
+							sORf = false;
+							cout << "오류 : 검색요소가 중복됩니다." << endl;
+							cout << "'전공/교양' 검색요소가 중복해서 존재합니다." << endl;
+							break;
+						}
+					}
+					else // 학과나 학부나 교양이라는 게 search에 없으면 바로 과목 이름으로 넣어줌
+					{
+						if (name == "0")
+						{
+							name = search;
+						}
+						else
+						{
+							sORf = false;
+							cout << "오류 : 검색요소가 중복됩니다." << endl;
+							cout << "'과목이름' 검색요소가 중복해서 존재합니다." << endl;
+							break;
+						}
+					}
+				}
+				else // 숫자가 아닌 문자열의 길이가 4 미만일 경우
+				{
+					if (name == "0") //name이 "0"이면 과목이름에 넣어줌
+					{
+						name = search;
 					}
 				}
 			}
@@ -123,18 +156,18 @@ void Search(string command) {
 				cout << "오류 : 입력된 <전공/교양>에 해당 <학년>이 존재할 수 없습니다." << endl;
 				cout << "<전공/교양>이 ""교양""일 경우 <학년>은 반드시 0이어야 합니다." << endl;
 				break;
-
 			}
+
 		}
 	}
 
-	/*
+
 	//각 자료형에 분리돼서 들어간 거 확인
 	cout << "grade :" << grade << endl;
 	cout << "id : " << id << endl;
 	cout << "name : " << name << endl;
 	cout << "major : " << major << endl;
-	*/
+
 
 	if (sORf == true) {
 		for (int i = 0; i < 10000; i++)
@@ -143,192 +176,192 @@ void Search(string command) {
 				//인자 하나도 없으면 전체 출력
 				if (id == "0" && name == "0" && grade == 5 && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호만 비교해서 검색
 				if (id == Subject[i]->id && name == "0" && grade == 5 && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목이름만 비교해서 검색
 				if (id == "0" && name == Subject[i]->name && grade == 5 && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//학년만 비교해서 검색
 				if (id == "0" && name == "0" && grade == Subject[i]->grade && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//전공/교양만 비교해서 검색
 				if (id == "0" && name == "0" && grade == 5 && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호,과목이름만 비교해서 검색
 				if (id == Subject[i]->id && name == Subject[i]->name && grade == 5 && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호,학년만 비교해서 검색
 				if (id == Subject[i]->id && name == "0" && grade == Subject[i]->grade && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호,전공/교양만 비교해서 검색
 				if (id == Subject[i]->id && name == "0" && grade == 5 && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목이름, 학년만 비교해서 검색
 				if (id == "0" && name == Subject[i]->name && grade == Subject[i]->grade && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목이름,전공/교양만 비교해서 검색
 				if (id == "0" && name == Subject[i]->name && grade == 5 && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//학년, 전공/교양만 비교해서 검색
 				if (id == "0" && name == "0" && grade == Subject[i]->grade && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호, 과목이름, 학년만 비교해서 검색
 				if (id == Subject[i]->id && name == Subject[i]->name && grade == Subject[i]->grade && major == "0")
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호, 과목이름, 전공/교양만 비교해서 검색
 				if (id == Subject[i]->id && name == Subject[i]->name && grade == 5 && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호, 학년, 전공/교양만 비교해서 검색
 				if (id == Subject[i]->id && name == "0" && grade == Subject[i]->grade && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목 이름, 학년, 전공/교양만 비교해서 검색
 				if (id == "0" && name == Subject[i]->name && grade == Subject[i]->grade && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 
 				//과목번호, 과목이름, 학년, 전공/교양만 비교해서 검색
 				if (id == Subject[i]->id && name == Subject[i]->name && grade == Subject[i]->grade && major == Subject[i]->major)
 				{
-					cout << Subject[i]->id << " ";
-					cout << Subject[i]->name << " ";
-					cout << Subject[i]->credit << " ";
-					cout << Subject[i]->major << " ";
-					cout << Subject[i]->grade << " ";
-					cout << Subject[i]->time << " ";
+					cout << Subject[i]->id << " | ";
+					cout << Subject[i]->name << " | ";
+					cout << Subject[i]->credit << " | ";
+					cout << Subject[i]->major << " | ";
+					cout << Subject[i]->grade << " | ";
+					cout << Subject[i]->time << " | ";
 					cout << Subject[i]->max << endl;
 				}
 			}
