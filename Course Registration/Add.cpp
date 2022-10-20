@@ -126,7 +126,7 @@ void Add(string command) {
 	cout << "이대로 추가하시겠습니까? (Yes/...)";
 	cin >> check;
 
-	if (check == "yes") {
+	if (check == "Yes") {
 		f2 << wstuid + L'\t';
 		f2.write(wstuname.c_str(), static_cast<streamsize>(wstuname.length()));
 		f2 << L'\t' + wmileage + L'\n';

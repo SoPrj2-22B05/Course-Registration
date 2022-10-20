@@ -87,7 +87,7 @@ void Alter(string command) {
 				cout << "[" << id << "] " << Subject[stoi(id)]->name << " " << stoi(tmpmlg) << "->" << mileage << "마일리지로 변경" << endl;
 				cout << "이대로 변경하시겠습니까? (Yes/...)";
 				cin >> check;
-				if (check == "yes") {
+				if (check == "Yes") {
 					cout << "성공적으로 변경되었습니다!" << endl;
 					f1.seekg(-9, ios::cur);
 					f1 << wid + L'\t' + wmileage + L'\n';

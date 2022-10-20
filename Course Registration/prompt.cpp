@@ -30,11 +30,8 @@ void User_info_menu() {
     cout << "학번 (또는 교번)을 입력해주세요" << endl;
     cout << "Course Registration > ";
     cin >> ID;
-    size_t npos;
-    npos = ID.find_first_not_of(' ');
-    ID.erase(0, npos);
-    npos = ID.find_last_not_of(' ');
-    ID.erase(npos + 1); //앞뒤 공백 제거
+    ID.erase(0, ID.find_first_not_of(" \t\n\r\f\v"));
+    ID.erase(ID.find_last_not_of(" \t\n\r\f\v") + 1);
 
     if (ID.compare("종료") == 0 || ID.compare("exit") == 0) {
         cout << "프로그램을 종료합니다.";
@@ -118,11 +115,8 @@ void Student_menu() {
     string alter[ORDER_NUM] = { "alter", "alt", "변경", "ㅂㄱ", "~" };
     string str;
     getline(cin, str);
-    size_t npos;
-    npos = str.find_first_not_of(' ');
-    str.erase(0, npos);
-    npos = str.find_last_not_of(' ');
-    str.erase(npos + 1); //앞뒤 공백 제거
+    str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
+    str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
     char separator = ' ';
     string stu_input[2];
     istringstream iss(str);
@@ -130,19 +124,21 @@ void Student_menu() {
     int i = 0;
     while (getline(iss, str_buf, separator)) {
         if (i <= 1) {
+            if (str_buf.compare("") == 0) { continue; }
             stu_input[i] = str_buf;
+            i++;
         }
-        i++;
+        else { break; }
     }
     bool c1 = false;
+    //cout << i << endl;
     if (i == 0) {
         cout << "Course Registration > ";
         Student_menu();
     }
     for (int i = 0; i < ORDER_NUM; i++) {
         if (logout[i].compare(stu_input[0]) == 0) {
-            User_info_menu();
-            c1 = true;
+            return;
         }
         else if (find[i].compare(stu_input[0]) == 0) {
             Search(str);
@@ -161,7 +157,10 @@ void Student_menu() {
             c1 = true;
         }
     }
-    if (!c1) print_manual();
+    if (!c1) {
+        print_manual();
+    }
+    cout << "Course Registration > ";
     Student_menu();
 }
 
@@ -185,7 +184,6 @@ void add_check(string str) {
     //과목번호 체크
     if (parameter[0].length() != 4) {
         add_help_print();
-        Student_menu();
         return;
     } //길이는 4
     int check = 0;
@@ -198,14 +196,12 @@ void add_check(string str) {
     }
     if (check != parameter[0].length()) {
         add_help_print();
-        Student_menu();
         return;
     }
     else check = 0;
     //마일리지 체크
     if (parameter[1].length() < 1 || parameter[1].length() > 3) {
         add_help_print();
-        Student_menu();
         return;
     } //길이는 1 ~ 3
     check = 0;
@@ -218,7 +214,6 @@ void add_check(string str) {
     }
     if (check != parameter[1].length()) {
         add_help_print();
-        Student_menu();
         return;
     }
     else check = 0; // 숫자만 있는지
@@ -246,13 +241,11 @@ void del_check(string str)
     }
     if (i > 1) { //인자 1개 초과 체크
         del_help_print();
-        Student_menu();
         return;
     }
     //과목번호 체크
     if (parameter[0].length() != 4) {
         del_help_print();
-        Student_menu();
         return;
     } //길이는 4
     int check = 0;
@@ -265,7 +258,6 @@ void del_check(string str)
     }
     if (check != parameter[0].length()) {
         add_help_print();
-        Student_menu();
         return;
     }
     else check = 0;
@@ -293,13 +285,11 @@ void alter_check(string str)
     }
     if (i > 2) { //인자가 2개 초과체크
         alter_help_print();
-        Student_menu();
         return;
     }
     //과목번호 체크
     if (parameter[0].length() != 4) {
         alter_help_print();
-        Student_menu();
         return;
     } //길이는 4
     int check = 0;
@@ -312,14 +302,12 @@ void alter_check(string str)
     }
     if (check != parameter[0].length()) {
         add_help_print();
-        Student_menu();
         return;
     }
     else check = 0;
     //마일리지 체크
     if (parameter[1].length() < 1 || parameter[1].length() > 3) {
         alter_help_print();
-        Student_menu();
         return;
     } //길이는 1 ~ 3
     check = 0;
@@ -332,7 +320,6 @@ void alter_check(string str)
     }
     if (check != parameter[1].length()) {
         add_help_print();
-        Student_menu();
         return;
     }
     else check = 0;
