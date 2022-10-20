@@ -13,9 +13,7 @@
 #include <codecvt>
 using namespace std;
 
-void Alter(string command) {
-	string studentid = "202111312";
-	string studentname = "¼ÛÇö¿ì";
+void Alter(string command, string studentid, string studentname) {
 	string id;
 	string mileage;
 	vector<string> adds;

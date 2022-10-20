@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <atlconv.h>
 #define ORDER_NUM 5
 using namespace std;
 
@@ -22,12 +23,16 @@ void alter_check(string str);
 void add_help_print();
 void del_help_print();
 void alter_help_print();
-
+wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
 boolean restart = false;
+string ID, name;
+
+string w2s(const wstring& _src) {
+    USES_CONVERSION;
+    return string(W2A(_src.c_str()));
+};
 
 void User_info_menu() {
-    string ID;
-    wstring line;
     string num[10] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
     cout << "학번 (또는 교번)을 입력해주세요" << endl;
     cout << "Course Registration > ";
@@ -60,7 +65,10 @@ void User_info_menu() {
     else check = 0;
     //숫자로 구성되야함
 
-    wstring wID;
+    wstring wID, wname;
+    vector<wstring> data; // id  name  major  grade  acquisition_credit
+    wstring line, str;
+    wstringstream ss;
     wID.assign(ID.begin(), ID.end());
     bool c = false; //true면 파일 안에 학번 있음. false면 없음.
     string filename1 = "사용자 데이터 파일.txt";
@@ -71,12 +79,22 @@ void User_info_menu() {
         while (getline(f1, line)) {
             wstring tmpid = line.substr(0, 9);
             if (tmpid == wID) {
+                ss.str(line);
+                while (getline(ss, str, L'\t')) {
+                    //str = trim(str);
+                    if (str != L"") {
+                        data.push_back(str);
+                    }
+                }
+                wname = data[1];
                 c = true;
                 break;
             }
         }
         f1.close();
     }
+    name = w2s(wname);
+
     if (!c) {
         cout << "해당하는 학번(또는 교번)이 없습니다." << endl;
         return;
@@ -120,12 +138,10 @@ void Student_menu() {
     string del[ORDER_NUM] = { "delete", "d", "삭제", "ㅅㅈ", "-" };
     string alter[ORDER_NUM] = { "alter", "alt", "변경", "ㅂㄱ", "~" };
     string str;
-    //cin.ignore();
     cout << "Course Registration > ";
     getline(cin, str);
     str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
     str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
-    //cout << "test" << str << "test" << endl;
     char separator = ' ';
     string stu_input[2];
     istringstream iss(str);
@@ -141,6 +157,7 @@ void Student_menu() {
     }
     bool c1 = false;
     if (i == 0) {
+        print_manual();
         restart = true;
         return;
     }
@@ -168,6 +185,7 @@ void Student_menu() {
     }
     if (!c1) {  //나머지 입력
         print_manual();
+
     }
     restart = true;
     return;
@@ -226,13 +244,14 @@ void add_check(string str) {
         return;
     }
     else check = 0; // 숫자만 있는지
-    Add(str);
+    Add(str, ID, name);
 }
 void add_help_print() {
     cout << "원하는 과목을 수강신청 추가하는 명령어" << endl;
     cout << "동의어: +  추가  ㅊㄱ  add  ad" << endl;
     cout << "인자: 1개의 과목번호와 1개의 마일리지" << endl;
     cout << "동작: 과목번호와 마일리지를 입력받고, 과목번호에 해당하는 과목에 마일리지를 배팅해 수강신청을 추가합니다." << endl;
+    cout << "Course Registration > ";
 }
 void del_check(string str)
 {
@@ -270,13 +289,14 @@ void del_check(string str)
         return;
     }
     else check = 0;
-    Delete(str);
+    Delete(str, ID, name);
 }
 void del_help_print() {
     cout << "삭제를 원하는 과목을 수강신청 취소하는 명령어" << endl;
     cout << "동의어: -  삭제  ㅅㅈ  delete  d" << endl;
     cout << "인자: 1개의 과목번호" << endl;
     cout << "동작: 과목번호를 입력받고, 과목번호에 해당하는 과목을 삭제합니다." << endl;
+    cout << "Course Registration > ";
 }
 void alter_check(string str)
 {
@@ -332,11 +352,12 @@ void alter_check(string str)
         return;
     }
     else check = 0;
-    Delete(str);
+    Alter(str, ID, name);
 }
 void alter_help_print() {
     cout << "이미 신청한 과목에 대해 분배한 마일리지를 변경하는 명령어" << endl;
     cout << "동의어: ~  변경  ㅂㄱ  alter  alt" << endl;
     cout << "인자: 1개의 과목번호와 1개의 마일리지" << endl;
     cout << "동작: 과목번호와 마일리지를 입력받아, 해당 과목번호에 분배된 기존의 마일리지를 인자로 들어온 마일리지로 변경합니다." << endl;
+    cout << "Course Registration > ";
 }

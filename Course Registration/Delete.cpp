@@ -11,9 +11,7 @@
 #include "SubjectData.h"
 using namespace std;
 
-void Delete(string command) {
-	string studentid = "202111312";
-	string studentname = "¼ÛÇö¿ì";
+void Delete(string command, string studentid, string studentname) {
 	string id = command;
 	wstring line;
 	bool check = false;
