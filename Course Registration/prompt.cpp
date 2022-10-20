@@ -114,13 +114,9 @@ void Student_menu() {
     string del[ORDER_NUM] = { "delete", "d", "삭제", "ㅅㅈ", "-" };
     string alter[ORDER_NUM] = { "alter", "alt", "변경", "ㅂㄱ", "~" };
     string str;
-    cin.ignore();
-    cout << "Course Registration > ";
     getline(cin, str);
     str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
     str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
-    //cout << "test" << str << "test" << endl;
-    
     char separator = ' ';
     string stu_input[2];
     istringstream iss(str);
@@ -135,10 +131,9 @@ void Student_menu() {
         else { break; }
     }
     bool c1 = false;
-    //cout << i << endl;
     if (i == 0) {
-        //cout << "Course Registration > ";
-        //Student_menu();
+        cout << "Course Registration > ";
+        Student_menu();
         return;
     }
     for (int i = 0; i < ORDER_NUM; i++) {
@@ -150,7 +145,6 @@ void Student_menu() {
             c1 = true;
         }
         else if (add[i].compare(stu_input[0]) == 0) {
-            cout << "stu_input[1]:" << stu_input[1] << endl;
             add_check(stu_input[1]);
             c1 = true;
         }
