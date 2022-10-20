@@ -126,10 +126,6 @@ void Student_menu() {
     str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
     str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
     //cout << "test" << str << "test" << endl;
-
-    getline(cin, str);
-    str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
-    str.erase(str.find_last_not_of(" \t\n\r\f\v") + 1);
     char separator = ' ';
     string stu_input[2];
     istringstream iss(str);
@@ -146,8 +142,6 @@ void Student_menu() {
     bool c1 = false;
     if (i == 0) {
         restart = true;
-        cout << "Course Registration > ";
-        Student_menu();
         return;
     }
     for (int i = 0; i < ORDER_NUM; i++) {
