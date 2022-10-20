@@ -251,7 +251,6 @@ void add_help_print() {
     cout << "동의어: +  추가  ㅊㄱ  add  ad" << endl;
     cout << "인자: 1개의 과목번호와 1개의 마일리지" << endl;
     cout << "동작: 과목번호와 마일리지를 입력받고, 과목번호에 해당하는 과목에 마일리지를 배팅해 수강신청을 추가합니다." << endl;
-    cout << "Course Registration > ";
 }
 void del_check(string str)
 {
@@ -296,7 +295,6 @@ void del_help_print() {
     cout << "동의어: -  삭제  ㅅㅈ  delete  d" << endl;
     cout << "인자: 1개의 과목번호" << endl;
     cout << "동작: 과목번호를 입력받고, 과목번호에 해당하는 과목을 삭제합니다." << endl;
-    cout << "Course Registration > ";
 }
 void alter_check(string str)
 {
@@ -359,5 +357,4 @@ void alter_help_print() {
     cout << "동의어: ~  변경  ㅂㄱ  alter  alt" << endl;
     cout << "인자: 1개의 과목번호와 1개의 마일리지" << endl;
     cout << "동작: 과목번호와 마일리지를 입력받아, 해당 과목번호에 분배된 기존의 마일리지를 인자로 들어온 마일리지로 변경합니다." << endl;
-    cout << "Course Registration > ";
 }
