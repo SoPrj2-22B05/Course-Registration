@@ -52,6 +52,7 @@ void Delete(string command) {
 	cout << "정말 삭제하시겠습니까? (Yes/...)";
 	string dcheck;
 	cin >> dcheck;
+	cin.ignore();
 	if (dcheck == "Yes") {
 		remove(filename1.c_str());
 	}

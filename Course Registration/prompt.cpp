@@ -168,9 +168,6 @@ void Student_menu() {
     }
     if (!c1) {  //나머지 입력
         print_manual();
-        
-    } else {
-        cin.ignore();
     }
     restart = true;
     return;

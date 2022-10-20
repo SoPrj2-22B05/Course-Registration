@@ -125,7 +125,7 @@ void Add(string command) {
 	f3.open(filename1, ios::app);
 	cout << "이대로 추가하시겠습니까? (Yes/...)";
 	cin >> check;
-
+	cin.ignore();
 	if (check == "Yes") {
 		f2 << wstuid + L'\t';
 		f2.write(wstuname.c_str(), static_cast<streamsize>(wstuname.length()));
