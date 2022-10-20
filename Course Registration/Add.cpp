@@ -51,7 +51,7 @@ void Add(string command) {
 	// 존재하는 과목인지 체크
 
 	if (Subject[stoi(id)] == NULL) {
-		cout << "오류 : 존재하지 않는 과목입니다.";
+		cout << "오류 : 존재하지 않는 과목입니다." << endl;
 		return;
 	}
 
@@ -66,7 +66,7 @@ void Add(string command) {
 			wstring tmpmlg = line.substr(4);
 			mileage_sum += stoi(tmpmlg);
 			if (tmpid == wid) { // 사용자 중복 체크
-				cout << "오류 : 이미 추가한 과목입니다";
+				cout << "오류 : 이미 추가한 과목입니다"<<endl;
 				return;
 			}
 			find_time.push_back(Subject[stoi(tmpid)]->time); // 과목 시간대 저장
@@ -98,7 +98,7 @@ void Add(string command) {
 				int c_left = stoi(compare_times[i].substr(2, 2));
 				int c_right = stoi(compare_times[i].substr(5, 2));
 				if ((f_left >= c_left && f_left < c_right) || (f_right > c_left && f_right <= c_right)) {
-					cout << "오류 : 추가하려는 과목과 강의시간이 겹치는 과목이 이미 추가되었습니다.";
+					cout << "오류 : 추가하려는 과목과 강의시간이 겹치는 과목이 이미 추가되었습니다." << endl;
 					return;
 				}
 			}
@@ -108,11 +108,11 @@ void Add(string command) {
 
 	// 마일리지 체크
 	if (mileage_sum > 72) {
-		cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다.";
+		cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다." << endl;
 		return;
 	}
 	if (stoi(mileage) > 36) {
-		cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다.";
+		cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
 		return;
 	}
 	// 추가 yes / no 

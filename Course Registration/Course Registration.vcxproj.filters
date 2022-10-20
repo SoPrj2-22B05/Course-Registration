@@ -70,7 +70,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\..\Desktop\과목 데이터 파일.txt" />
-    <Text Include="..\..\..\..\..\Desktop\사용자 데이터 파일.txt" />
+    <Text Include="과목 데이터 파일.txt" />
+    <Text Include="사용자 데이터 파일.txt" />
   </ItemGroup>
 </Project>

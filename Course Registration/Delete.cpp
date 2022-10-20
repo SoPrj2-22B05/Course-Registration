@@ -46,7 +46,7 @@ void Delete(string command) {
 		lineCount = 0;
 	}
 	if (pos == -1) {
-		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다.";
+		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다." << endl;
 		return;
 	}
 	cout << "정말 삭제하시겠습니까? (Yes/...)";

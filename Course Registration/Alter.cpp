@@ -50,12 +50,12 @@ void Alter(string command) {
 
 	// 존재하는 과목인지 체크
 	if (Subject[stoi(id)] == NULL) {
-		cout << "오류 : 존재하지 않는 과목입니다.";
+		cout << "오류 : 존재하지 않는 과목입니다." << endl;
 		return;
 	}
 	// 마일리지 오류
 	if (stoi(mileage) > 36) {
-		cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다.";
+		cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
 		return;
 	}
 
@@ -80,7 +80,7 @@ void Alter(string command) {
 				mileage_sum -= stoi(tmpmlg);
 				mileage_sum += stoi(mileage);
 				if (mileage_sum > 72) {
-					cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다.";
+					cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다." << endl;
 					return;
 				}
 				find_id = true;
@@ -100,7 +100,7 @@ void Alter(string command) {
 		f1.close();
 	}
 	if (!find_id) {
-		cout << "오류 : 수강 신청하지 않은 과목입니다.";
+		cout << "오류 : 수강 신청하지 않은 과목입니다." << endl;
 		return;
 	}
 	string filename2 = id + '_' + subname + "_출석부.txt" ;

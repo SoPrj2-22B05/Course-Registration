@@ -8,6 +8,8 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <fstream>
+#include <vector>
 #define ORDER_NUM 5
 using namespace std;
 
@@ -23,11 +25,12 @@ void alter_help_print();
 
 void User_info_menu() {
     string ID;
+    wstring line;
     string num[10] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
     cout << "학번 (또는 교번)을 입력해주세요" << endl;
+    cout << "Course Registration > ";
     cin >> ID;
     size_t npos;
-   
     npos = ID.find_first_not_of(' ');
     ID.erase(0, npos);
     npos = ID.find_last_not_of(' ');
@@ -37,40 +40,56 @@ void User_info_menu() {
         cout << "프로그램을 종료합니다.";
         exit(0);
     }
-    bool c = false; //true면 파일 안에 학번 있음. false면 없음.
-    for (int i = 0; i < 10000; i++) {
-        if (Subject[i]->id.compare(ID)) {
-            c = true;
-            break;
+
+    if (ID.length() != 9) { //길이는 9
+        cout << "해당하는 학번(또는 교번)이 없습니다." << endl;
+        return;
+    }
+
+    int check = 0;
+    for (int i = 0; i < ID.length(); i++) {
+        for (int j = 0; j < 10; j++) {
+            if (num[j].compare(ID.substr(i, 1)) == 0) {
+                check++;
+            }
         }
     }
-    if (!c) {
-        exit(0);
+    if (check != ID.length()) {
+        cout << "해당하는 학번(또는 교번)이 없습니다." << endl;
+        return;
     }
-    if (ID.length() != 9) { //길이는 9
-        cout << "해당하는 학번(또는 교번)이 없습니다.";
+    else check = 0;
+    //숫자로 구성되야함
+
+    wstring wID;
+    wID.assign(ID.begin(), ID.end());
+    bool c = false; //true면 파일 안에 학번 있음. false면 없음.
+    string filename1 = "사용자 데이터 파일.txt";
+    wfstream f1;
+    f1.imbue(locale("ko_KR.UTF-8"));
+    f1.open(filename1);
+    if (f1.is_open()) { // 학번 이름 긁어오기
+        while (getline(f1, line)) {
+            wstring tmpid = line.substr(0, 9);
+            if (tmpid == wID) {
+                c = true;
+                break;
+            }
+        }
+        f1.close();
+    }
+    if (!c) {
+        cout << "해당하는 학번(또는 교번)이 없습니다." << endl;
         return;
     }
     else {
-        bool check = false; //true면 숫자임, false면 숫자아님
-        for (int i = 0; i < ID.length(); i++) {
-            for (int j = 0; j < 10; j++) {
-                if (num[j].compare(ID.substr(i, 1)) == 0) {
-                    check = true;
-                }
-            }
-            if (!check) {
-                cout << "해당하는 학번(또는 교번)이 없습니다.";
-                return;
-            }
-        } //숫자로 구성되야함
-        
         if ((ID.substr(0, 4)).compare("0000") == 0) {
             cout << "관리자 주 프롬프트로 이동합니다" << endl;
             Administrator_menu();
         }
         else {
             cout << "학생 주 프롬프트로 이동합니다" << endl;
+            print_manual();
             Student_menu();
         }
     }
@@ -99,6 +118,11 @@ void Student_menu() {
     string alter[ORDER_NUM] = { "alter", "alt", "변경", "ㅂㄱ", "~" };
     string str;
     getline(cin, str);
+    size_t npos;
+    npos = str.find_first_not_of(' ');
+    str.erase(0, npos);
+    npos = str.find_last_not_of(' ');
+    str.erase(npos + 1); //앞뒤 공백 제거
     char separator = ' ';
     string stu_input[2];
     istringstream iss(str);
@@ -110,30 +134,34 @@ void Student_menu() {
         }
         i++;
     }
-
+    bool c1 = false;
+    if (i == 0) {
+        cout << "Course Registration > ";
+        Student_menu();
+    }
     for (int i = 0; i < ORDER_NUM; i++) {
         if (logout[i].compare(stu_input[0]) == 0) {
             User_info_menu();
-            return;
+            c1 = true;
         }
         else if (find[i].compare(stu_input[0]) == 0) {
             Search(str);
-            return;//검색은 따로 추가
+            c1 = true;
         }
         else if (add[i].compare(stu_input[0]) == 0) {
             add_check(stu_input[1]);
-            return;
+            c1 = true;
         }
         else if (del[i].compare(stu_input[0]) == 0) {
             del_check(stu_input[1]);
-            return;
+            c1 = true;
         }
         else if (alter[i].compare(stu_input[0]) == 0) {
             alter_check(stu_input[1]);
-            return;
+            c1 = true;
         }
     }
-    print_manual();
+    if (!c1) print_manual();
     Student_menu();
 }
 
@@ -152,7 +180,6 @@ void add_check(string str) {
     }
     if (i > 2) { //인자가 2개 초과체크
         add_help_print();
-        Student_menu();
         return;
     }
     //과목번호 체크
@@ -161,46 +188,40 @@ void add_check(string str) {
         Student_menu();
         return;
     } //길이는 4
-    bool check = false; //true면 숫자임, false면 숫자아님
+    int check = 0;
     for (int i = 0; i < parameter[0].length(); i++) {
         for (int j = 0; j < 10; j++) {
             if (num[j].compare(parameter[0].substr(i, 1)) == 0) {
-                check = true;
+                check++;
             }
         }
-        if (!check) {
-            add_help_print();
-            Student_menu();
-            return;
-        }
-    } //숫자로 구성되야함
+    }
+    if (check != parameter[0].length()) {
+        add_help_print();
+        Student_menu();
+        return;
+    }
+    else check = 0;
     //마일리지 체크
     if (parameter[1].length() < 1 || parameter[1].length() > 3) {
         add_help_print();
         Student_menu();
         return;
     } //길이는 1 ~ 3
-    check = false; //true면 숫자임, false면 숫자아님
+    check = 0;
     for (int i = 0; i < parameter[1].length(); i++) {
         for (int j = 0; j < 10; j++) {
             if (num[j].compare(parameter[1].substr(i, 1)) == 0) {
-                check = true;
+                check++;
             }
         }
-        if (!check) {
-            add_help_print();
-            Student_menu();
-            return;
-        }
-    } //숫자로 구성되야함
-    if (parameter[1].length() > 1) {
-        for (int i = 0; i < parameter[1].length(); i++) {
-            if ((parameter[1].substr(i, 1).compare("0")) == 0) {
-                parameter[1].erase(i, 1);
-            }
-        }
-        int mile = stoi(parameter[1]);
-    }//마일리지 0제거
+    }
+    if (check != parameter[1].length()) {
+        add_help_print();
+        Student_menu();
+        return;
+    }
+    else check = 0; // 숫자만 있는지
     Add(str);
 }
 void add_help_print() {
@@ -234,19 +255,20 @@ void del_check(string str)
         Student_menu();
         return;
     } //길이는 4
-    bool check = false; //true면 숫자임, false면 숫자아님
+    int check = 0;
     for (int i = 0; i < parameter[0].length(); i++) {
         for (int j = 0; j < 10; j++) {
             if (num[j].compare(parameter[0].substr(i, 1)) == 0) {
-                check = true;
+                check++;
             }
         }
-        if (!check) {
-            del_help_print();
-            Student_menu();
-            return;
-        }
-    } //숫자로 구성되야함
+    }
+    if (check != parameter[0].length()) {
+        add_help_print();
+        Student_menu();
+        return;
+    }
+    else check = 0;
     Delete(str);
 }
 void del_help_print() {
@@ -280,46 +302,40 @@ void alter_check(string str)
         Student_menu();
         return;
     } //길이는 4
-    bool check = false; //true면 숫자임, false면 숫자아님
+    int check = 0;
     for (int i = 0; i < parameter[0].length(); i++) {
         for (int j = 0; j < 10; j++) {
             if (num[j].compare(parameter[0].substr(i, 1)) == 0) {
-                check = true;
+                check++;
             }
         }
-        if (!check) {
-            alter_help_print();
-            Student_menu();
-            return;
-        }
-    } //숫자로 구성되야함
+    }
+    if (check != parameter[0].length()) {
+        add_help_print();
+        Student_menu();
+        return;
+    }
+    else check = 0;
     //마일리지 체크
     if (parameter[1].length() < 1 || parameter[1].length() > 3) {
         alter_help_print();
         Student_menu();
         return;
     } //길이는 1 ~ 3
-    check = false; //true면 숫자임, false면 숫자아님
+    check = 0;
     for (int i = 0; i < parameter[1].length(); i++) {
         for (int j = 0; j < 10; j++) {
             if (num[j].compare(parameter[1].substr(i, 1)) == 0) {
-                check = true;
+                check++;
             }
         }
-        if (!check) {
-            alter_help_print();
-            Student_menu();
-            return;
-        }
-    } //숫자로 구성되야함
-    if (parameter[1].length() > 1) {
-        for (int i = 0; i < parameter[1].length(); i++) {
-            if ((parameter[1].substr(i, 1).compare("0")) == 0) {
-                parameter[1].erase(i, 1);
-            }
-        }
-        int mile = stoi(parameter[1]);
-    }//마일리지 0제거
+    }
+    if (check != parameter[1].length()) {
+        add_help_print();
+        Student_menu();
+        return;
+    }
+    else check = 0;
     Delete(str);
 }
 void alter_help_print() {
