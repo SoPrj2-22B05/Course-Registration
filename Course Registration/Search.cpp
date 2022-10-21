@@ -11,6 +11,17 @@
 using namespace std;
 
 void Logout(string command) {
+	stringstream stream;
+	stream.str(command);
+	string token;
+	string arr[100] = { "0" };
+	int i = 0;
+	while (stream >> token) {
+		arr[i] = token;
+		i++;
+	}
+	command = arr[1];
+
 	if (command.empty() == 0) {
 		cout << "문법 형식에 위배됩니다. (인자가 없어야 함)" << endl;
 	}
@@ -19,8 +30,19 @@ void Logout(string command) {
 	}
 }
 void Search(string command) {
-	cout << "command : " << command << endl;
-	//초기화
+
+	stringstream stream;
+	stream.str(command);
+	string token1;
+	string arr[100] = { "0" };
+	int i = 0;
+	while (stream >> token1) {
+		arr[i] = token1;
+		i++;
+	}
+	command = arr[1];
+
+
 	int grade = 5;
 	string id = "0";
 	string major = "0";
@@ -32,12 +54,12 @@ void Search(string command) {
 	//getline(cin, str);
 	vector<string> searchs;
 	stringstream ss(command);
-	string token;
+	string token2;
 
 	//문자열을 '/' 기준으로 자릅니다.
-	while (getline(ss, token, '/'))
+	while (getline(ss, token2, '/'))
 	{
-		searchs.push_back(token);
+		searchs.push_back(token2);
 	}
 
 	if (searchs.size() > 4) // 문법형식 위배 (인자가 5개 이상이 되는 경우)
@@ -163,11 +185,12 @@ void Search(string command) {
 
 
 	//각 자료형에 분리돼서 들어간 거 확인
+	/*
 	cout << "grade :" << grade << endl;
 	cout << "id : " << id << endl;
 	cout << "name : " << name << endl;
 	cout << "major : " << major << endl;
-
+	*/
 
 	if (sORf == true) {
 		for (int i = 0; i < 10000; i++)
