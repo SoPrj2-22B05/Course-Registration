@@ -369,6 +369,17 @@ bool check_Sname(wstring const& str) {
 		return false;
 	}
 
+	// 숫자로만 구성되면 안됨
+	name_reg = L"^[0-9]+$";
+	if (regex_match(str, name_reg)) {
+		return false;
+	}
+
+	// "교양"과 일치하면 안됨
+	if (str.compare(L"교양") == 0) {
+		return false;
+	}
+
 	// 마지막이 "학과" 또는 "학부"로 끝나면 안됨
 	name_reg = L".*(학과|학부)$";
 	if (regex_match(str, name_reg)) {
