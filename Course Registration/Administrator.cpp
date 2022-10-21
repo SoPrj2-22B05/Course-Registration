@@ -51,7 +51,7 @@ bool addEnd = false;
 void Administrator_menu() {
 	string adminCommand;
 tryAgain:
-	cout << "Course Registration>";
+	cout << "Course Registration > ";
 	cin >> adminCommand;
 	if ((adminCommand.compare("로그아웃") == 0) || (adminCommand.compare("logout") == 0)) {
 		return;
@@ -68,7 +68,24 @@ tryAgain:
 		}
 
 		//종료할 때 파일 삭제
-
+		locale::global(std::locale("Korean"));
+		wstring dir = fs::current_path();
+		fs::directory_iterator itr(dir);
+		while (itr != fs::end(itr)) {
+			const fs::directory_entry& entry = *itr;
+			wstring filename = entry.path();
+			filename.replace(0, dir.size() + 1, L"");
+			//wcout << filename << endl;
+			//cout << filename.size() << endl;
+			if (filename.size() >= 11) {
+				filename = filename.substr(filename.size() - 11);
+				if (filename.compare(L"_수강신청목록.txt") == 0) {
+					fs::path p(entry.path());
+					fs::remove(p);
+				}
+			}
+			itr++;
+		}
 		// 전체 프로그램을 종료
 		exit(0);
 	}
