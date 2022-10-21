@@ -31,7 +31,7 @@ void Logout(string command) {
 	}
 }
 void Search(string command) {
-	cout << command << endl;
+	//cout << command << endl; // 인자 확인
 	stringstream stream;
 
 	stream.str(command);
@@ -230,12 +230,12 @@ void Search(string command) {
 
 
 		//각 자료형에 분리돼서 들어간 거 확인
-
+		/*
 		cout << "grade :" << grade << endl;
 		cout << "id : " << id << endl;
 		cout << "name : " << name << endl;
 		cout << "major : " << major << endl;
-
+		*/
 
 		if (sORf == true) {
 			for (int i = 0; i < 10000; i++)
