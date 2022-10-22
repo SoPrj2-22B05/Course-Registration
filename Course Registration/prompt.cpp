@@ -172,12 +172,16 @@ void Student_menu() {
         if (alter[k].compare(stu_input[0]) == 0) { realOrderNum = 4; break; }
     }
 
-    if (str.find_first_of(" \t\f\v") >= 0 && str.find_first_of(" \t\f\v") < str.size()) {
-        if (str.find_first_of(" \t\f\v") < 0 || str.find_first_of(" \t\f\v") >= str.size()) {   //입력에 횡공백류 하나도 없으면 리턴
+    if (str.find_first_of(" \t\f\v") < 0 || str.find_first_of(" \t\f\v") >= str.size()) {   //입력에 횡공백류 하나도 없으면 리턴
+        if (realOrderNum == -1) {
             print_manual();
             restart = true;
             return;
         }
+    }
+
+    stu_input[1] = "";
+    if (str.find_first_of(" \t\f\v") >= 0 && str.find_first_of(" \t\f\v") < str.size()) {   
         
         commandExcept = str.substr(str.find_first_of(" \t\f\v"));
         stu_input[1] = commandExcept.substr(commandExcept.find_first_not_of(" \t\f\v"));
@@ -336,6 +340,10 @@ void add_check(string str) {
         }
         i++;
     }
+    if (str.compare("") == 0) {
+        add_help_print();
+        return;
+    }
     if (str[str.size() - 1] == '/') {
         add_help_print();
         return;
@@ -402,6 +410,10 @@ void del_check(string str)
         }
         i++;
     }
+    if (str.compare("") == 0) {
+        del_help_print();
+        return;
+    }
     if (i > 1) { //인자 1개 초과 체크
         del_help_print();
         return;
@@ -446,8 +458,12 @@ void alter_check(string str)
         }
         i++;
     }
+    if (str.compare("") == 0) {
+        alter_help_print();
+        return;
+    }
     if (str[str.size() - 1] == '/') {
-        add_help_print();
+        alter_help_print();
         return;
     }
     if (i > 2) { //인자가 2개 초과체크
