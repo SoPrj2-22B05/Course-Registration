@@ -76,7 +76,6 @@ void Alter(string command, string studentid, string studentname) {
 			wstring tmpmlg = line.substr(4);
 			if (tmpid == wid) { // 사용자 파일에 존재
 				mileage_sum -= stoi(tmpmlg);
-				mileage_sum += stoi(mileage);
 				if (mileage_sum > 72) {
 					cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다." << endl;
 					return;
@@ -120,4 +119,6 @@ void Alter(string command, string studentid, string studentname) {
 		}
 		f2.close();
 	}
+	cin.ignore();
+	return;
 }
