@@ -57,7 +57,25 @@ tryAgain:
 		return;
 	}
 	else if ((adminCommand.compare("시작") == 0) || (adminCommand.compare("start") == 0)) {
-		StartOrEnd(START);
+		bool isStart= StartOrEnd(START);
+		if (isStart) {
+			locale::global(std::locale("Korean"));
+			wstring dir = fs::current_path();
+			fs::directory_iterator itr1(dir);
+			while (itr1 != fs::end(itr1)) {
+				const fs::directory_entry& entry = *itr1;
+				wstring filename = entry.path();
+				filename.replace(0, dir.size() + 1, L"");
+				if (filename.size() >= 8) {
+					filename = filename.substr(filename.size() - 8);
+					if (filename.compare(L"_출석부.txt") == 0) {
+						fs::path p(entry.path());
+						fs::remove(p);
+					}
+				}
+				itr1++;
+			}
+		}
 		goto tryAgain;
 	}
 	else if ((adminCommand.compare("종료") == 0) || (adminCommand.compare("end") == 0)) {
@@ -70,9 +88,9 @@ tryAgain:
 		//종료할 때 파일 삭제
 		locale::global(std::locale("Korean"));
 		wstring dir = fs::current_path();
-		fs::directory_iterator itr(dir);
-		while (itr != fs::end(itr)) {
-			const fs::directory_entry& entry = *itr;
+		fs::directory_iterator itr2(dir);
+		while (itr2 != fs::end(itr2)) {
+			const fs::directory_entry& entry = *itr2;
 			wstring filename = entry.path();
 			filename.replace(0, dir.size() + 1, L"");
 			//wcout << filename << endl;
@@ -84,7 +102,7 @@ tryAgain:
 					fs::remove(p);
 				}
 			}
-			itr++;
+			itr2++;
 		}
 		// 전체 프로그램을 종료
 		exit(0);
@@ -112,6 +130,7 @@ bool StartOrEnd(boolean command) {
 			wofstream out(dir + L"\\Course_Registration_Is_On.txt");
 			out.close();
 			cout << "수강신청을 시작합니다." << endl;
+			return true;
 		}
 		else if (command == END) {
 			cout << "아직 수강신청이 시작되지 않았습니다." << endl;
@@ -126,7 +145,7 @@ bool StartOrEnd(boolean command) {
 			fs::path p(dir + L"\\Course_Registration_Is_On.txt");
 			fs::remove(p);
 			cout << "수강신청을 종료합니다." << endl;
-			return true;	// 유일하게 true를 리턴
+			return true;
 		}
 		/*
 		else {

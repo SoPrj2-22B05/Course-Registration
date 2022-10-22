@@ -119,4 +119,6 @@ void Alter(string command, string studentid, string studentname) {
 		}
 		f2.close();
 	}
+	cin.ignore();
+	return;
 }

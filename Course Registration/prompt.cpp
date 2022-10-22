@@ -200,13 +200,13 @@ void Student_menu() {
             }
             else if (del[i].compare(stu_input[0]) == 0) {
                 if (start_check()) {
-                    add_check(stu_input[1]);
+                    del_check(stu_input[1]);
                     check2 = true;
                 }
             }
             else if (alter[i].compare(stu_input[0]) == 0) {
                 if (start_check()) {
-                    add_check(stu_input[1]);
+                    alter_check(stu_input[1]);
                     check2 = true;
                 }
             }
