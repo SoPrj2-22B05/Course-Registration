@@ -24,7 +24,7 @@ void Logout(string command) {
 	command = arr[1];
 
 	if (command.empty() == 0) {
-		cout << "문법 형식에 위배됩니다. logout 뒤에는 인자가 없어야 합니다." << endl;
+		cout << "오류 : logout 뒤에는 인자가 없어야 합니다." << endl;
 	}
 	if (command.empty() == 1) {
 		User_info_menu();
@@ -33,34 +33,30 @@ void Logout(string command) {
 void Search(string command) {
 	//cout << command << endl; // 인자 확인
 	bool sORf = true;
-	if (command.back() == '/')
-	{
-		cout << "문법 형식에 위배됩니다. '/'는 문자열 사이에 있어야 합니다." << endl;
-		sORf = false;
-	}
-
 	stringstream stream;
 	stream.str(command);
 	string token1;
 	string arr[100] = { "0" }; //arr[0]에 find, arr[1]에 과목번호/과목이름/학년/학과 문자열이 들어옴
 	int i = 0;
 	int SpecialCharacterIndex = 0;
+
+	//인자들 사이에 공백이나 특수 문자가 있으면 오류 띄워줌 
 	while (stream >> token1) {
 		arr[i] = token1;
 		i++;
 		if (i > 2) // find 뒤 문자열에 공백이 없으면 i == 2이기 때문에 (예:find 3123/전기프/3) i == 3 이상이라는 건 공백이 존재한다는 뜻 
 		{
-			cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 공백이 있으면 안 됩니다." << endl;
+			cout << "오류 : 입력 인자들 사이에 공백이 있으면 안 됩니다." << endl;
 			sORf = false;
 			break;
 		}
 		else if (i == 2)
 		{
-			for (char j = 33; j <= 46; j++)
+			for (char j = 33; j <= 46; j++) //아스키코드 상의 특수문자 범위 내에서 반복문을 돔
 			{
-				if (arr[1].find(j) != string::npos)
+				if (arr[1].find(j) != string::npos) //만약 해당하는 특수문자가 존재한다면
 				{
-					SpecialCharacterIndex = 1;
+					SpecialCharacterIndex = 1; // 특수문자인덱스의 값을 1로 변경시킴
 					break;
 				}
 			}
@@ -91,17 +87,20 @@ void Search(string command) {
 		}
 
 	}
-	if (SpecialCharacterIndex == 1)
+	if (SpecialCharacterIndex == 1) //특수문자 인덱스가 1이면 특수 문자가 있다는 뜻이므로 오류 출력
 	{
-		cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
+		cout << "오류 : 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
 		sORf = false;
 	}
 
-
+	if (arr[1].back() == '/' || arr[1].front() == '/') // 인자의 첫번째 문자나 마지막 문자가 /이면 오류 출력
+	{
+		cout << "오류 : '/'는 문자열 사이에 있어야 합니다." << endl;
+		sORf = false;
+	}
 
 	if (sORf == true) { // 과목번호/과목이름/학년/학과 문자열에 공백이나 특수문자가 있으면 이 밑부분은 실행이 안 되도록 합니다.
 		command = arr[1]; //find 뒤의 문자열이 들어갑니다.
-
 		int grade = 5;
 		string id = "0";
 		string major = "0";
@@ -118,7 +117,6 @@ void Search(string command) {
 		{
 			searchs.push_back(token2);
 		}
-
 
 		if (searchs.size() > 4) // 문법형식 위배 (인자가 5개 이상이 되는 경우)
 		{
