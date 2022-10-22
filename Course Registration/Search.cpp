@@ -31,22 +31,12 @@ void Logout(string command) {
 	}
 }
 void Search(string command) {
-	//cout << command << endl; // 인자 확인
 	stringstream stream;
-
 	stream.str(command);
 	string token1;
 	string arr[100] = { "0" }; //arr[0]에 find, arr[1]에 과목번호/과목이름/학년/학과 문자열이 들어옴
 	int i = 0;
 	bool sORf = true;
-	//stream >> token1;
-	//arr[0] = token1;
-
-	//stream >> token1;
-	//arr[1] = token1;
-	//stream >> arr[0];
-
-
 
 	while (stream >> token1) {
 		arr[i] = token1;
@@ -75,8 +65,6 @@ void Search(string command) {
 				}
 			}
 		}
-		//cout << "i : " << i << endl;
-
 	}
 	if (sORf == true) { // 과목번호/과목이름/학년/학과 문자열에 공백이나 특수문자가 있으면 이 밑부분은 실행이 안 되도록 합니다.
 		command = arr[1]; //arr[1]에 

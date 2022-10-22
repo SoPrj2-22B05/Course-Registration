@@ -147,47 +147,69 @@ void Student_menu() {
     istringstream iss(str);
     string str_buf;
     int i = 0;
+    bool sORf = true;
     while (getline(iss, str_buf, separator)) {
         if (i <= 1) {
             if (str_buf.compare("") == 0) { continue; }
             stu_input[i] = str_buf;
             i++;
         }
-        else { break; }
+        else {
+            cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 공백이 있으면 안 됩니다." << endl;
+            sORf = false;
+            break;
+        }
     }
-    bool c1 = false;
-    if (i == 0) {
-        print_manual();
-        restart = true;
-        return;
+    char* chars = new char[stu_input[1].length() + 1];
+    stu_input[1].copy(chars, stu_input[1].length());
+    chars[stu_input[1].length()] = '\0';
+    for (int j = 0; j < stu_input[1].length(); j++)
+    {
+        // 아스키코드 상의 특수문자가 있으면 오류 출력
+        // 과목이름이 알파벳으로만 구성되어 있으면 걍 알파벳만 아스키코드 포함시킨 뒤 not 하면 되는데...
+        // 한글이 껴있다보니 하트나 네모 등의 특수문자까지 제거하려면 모든 경우의 수를 일일이 다 제거해줘야 돼서 현실적으로 어려울 것 같습니다. 
+        if (!((chars[j]>=0 && chars[j]<=9)||chars[j]==47)) // 47은 '/'라서 46까지만
+        {
+            cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
+            sORf = false;
+            break;
+        }
     }
-    for (int i = 0; i < ORDER_NUM; i++) {
-        if (logout[i].compare(stu_input[0]) == 0) {
+
+    if (sORf) {
+        bool c1 = false;
+        if (i == 0) {
+            print_manual();
+            restart = true;
             return;
         }
-        else if (find[i].compare(stu_input[0]) == 0) {
-            Search(str);
-            c1 = true;
+        for (int i = 0; i < ORDER_NUM; i++) {
+            if (logout[i].compare(stu_input[0]) == 0) {
+                return;
+            }
+            else if (find[i].compare(stu_input[0]) == 0) {
+                Search(str);
+                c1 = true;
+            }
+            else if (add[i].compare(stu_input[0]) == 0) {
+                add_check(stu_input[1]);
+                c1 = true;
+            }
+            else if (del[i].compare(stu_input[0]) == 0) {
+                del_check(stu_input[1]);
+                c1 = true;
+            }
+            else if (alter[i].compare(stu_input[0]) == 0) {
+                alter_check(stu_input[1]);
+                c1 = true;
+            }
         }
-        else if (add[i].compare(stu_input[0]) == 0) {
-            //cout << "stu_input[1]:" << stu_input[1] << endl;
-            add_check(stu_input[1]);
-            c1 = true;
-        }
-        else if (del[i].compare(stu_input[0]) == 0) {
-            del_check(stu_input[1]);
-            c1 = true;
-        }
-        else if (alter[i].compare(stu_input[0]) == 0) {
-            alter_check(stu_input[1]);
-            c1 = true;
-        }
-    }
-    if (!c1) {  //나머지 입력
-        print_manual();
+        if (!c1) {  //나머지 입력
+            print_manual();
 
+        }
+        restart = true;
     }
-    restart = true;
     return;
 }
 
