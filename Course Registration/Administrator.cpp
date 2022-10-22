@@ -53,6 +53,9 @@ void Administrator_menu() {
 tryAgain:
 	cout << "Course Registration > ";
 	getline(cin, adminCommand);
+	adminCommand.erase(0, adminCommand.find_first_not_of(" \t\n\r\f\v"));
+	adminCommand.erase(adminCommand.find_last_not_of(" \t\n\r\f\v") + 1);
+
 	if ((adminCommand.compare("로그아웃") == 0) || (adminCommand.compare("logout") == 0)) {
 		return;
 	}
@@ -185,11 +188,11 @@ void Prioritizing() { //우선순위 정하는 함수
 		locale::global(locale("ko_KR.UTF-8"));
 		wstring filename = subjectID + L"_" + subjectName + L"_출석부.txt";
 		wfstream f(filename);
-
 		vector<Student> stuVector;
 		vector<wstring> data;
 		wstring line, str;
 		wstringstream ss;
+		boolean cont = false;
 		if (f.is_open()) {
 			int lineCount = 0;		//lineNumber로서, 학생 객체의 order로 들어가 6번째 우선순위에서 활용됨
 			while (getline(f, line)) {
@@ -213,7 +216,6 @@ void Prioritizing() { //우선순위 정하는 함수
 				}
 				int mileage = stoi(data[2]);
 				stuVector.push_back(Student(data[0], data[1], mileage, lineCount));
-
 				//stuVector[lineCount-1].PrintStudentInfo();
 				locale::global(locale::classic());
 			}
@@ -230,7 +232,6 @@ void Prioritizing() { //우선순위 정하는 함수
 				FirstPriority(stuVector, max, grade, major, filename);
 			}
 		}
-
 	}
 	locale::global(locale::classic());
 	cout << "모든 과목에 대한 수강신청 우선순위가 정해져 출석부 파일이 확정되었습니다." << endl;
@@ -621,13 +622,14 @@ void FinalizeAttendanceBook(vector<Student>& v1, wstring filename, bool addEnd) 
 	else {
 		wfstream f(filename, ios::out);
 		if (f.is_open()) cout << "열림" << endl;
-		for (i = 0; i < v1.size() - 1; i++) {
-			f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName() << endl;
+		if (v1.size() > 0) {
+			for (i = 0; i < v1.size() - 1; i++) {
+				f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName() << endl;
+			}
+			f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName();
 		}
-		f << v1[i].GetStudentNum() << L"\t" << v1[i].GetStudentName();
 		f.close();
 	}
-
 }
 
 wstring& trimFunc(wstring& s, const wchar_t* t) {

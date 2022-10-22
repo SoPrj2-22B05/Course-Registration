@@ -13,4 +13,5 @@ void del_check(string str);
 void del_help_print();
 void alter_check(string str);
 void alter_help_print();
+void find_help_print();
 bool start_check();

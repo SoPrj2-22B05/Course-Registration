@@ -36,7 +36,6 @@ void Add(string command, string studentid, string studentname) {
 		mileage = "0" + mileage;
 	}
 	mileage_sum = stoi(mileage);
-
 	wstring wstuid, wmileage, wid, wsubname;
 	wstuid.assign(studentid.begin(), studentid.end());
 	wmileage.assign(mileage.begin(), mileage.end());
@@ -47,7 +46,6 @@ void Add(string command, string studentid, string studentname) {
 	wstring wstuname(A2W(studentname.c_str()));
 
 	// 존재하는 과목인지 체크
-
 	if (Subject[stoi(id)] == NULL) {
 		cout << "오류 : 존재하지 않는 과목입니다." << endl;
 		return;
