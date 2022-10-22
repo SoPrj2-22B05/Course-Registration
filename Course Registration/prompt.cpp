@@ -38,7 +38,7 @@ void User_info_menu() {
     string num[10] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
     cout << "학번 (또는 교번)을 입력해주세요" << endl;
     cout << "Course Registration > ";
-    cin >> ID;
+    getline(cin, ID);   //추가한 코드
     ID.erase(0, ID.find_first_not_of(" \t\n\r\f\v"));
     ID.erase(ID.find_last_not_of(" \t\n\r\f\v") + 1);
 
@@ -200,13 +200,13 @@ void Student_menu() {
             }
             else if (del[i].compare(stu_input[0]) == 0) {
                 if (start_check()) {
-                    add_check(stu_input[1]);
+                    del_check(stu_input[1]);
                     check2 = true;
                 }
             }
             else if (alter[i].compare(stu_input[0]) == 0) {
                 if (start_check()) {
-                    add_check(stu_input[1]);
+                    alter_check(stu_input[1]);
                     check2 = true;
                 }
             }

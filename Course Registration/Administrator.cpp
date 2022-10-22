@@ -52,7 +52,7 @@ void Administrator_menu() {
 	string adminCommand;
 tryAgain:
 	cout << "Course Registration > ";
-	cin >> adminCommand;
+	getline(cin, adminCommand);
 	if ((adminCommand.compare("로그아웃") == 0) || (adminCommand.compare("logout") == 0)) {
 		return;
 	}
@@ -65,6 +65,9 @@ tryAgain:
 		isEnd = StartOrEnd(END);
 		if (isEnd) {
 			Prioritizing();
+		}
+		else {
+			goto tryAgain;
 		}
 
 		//종료할 때 파일 삭제
