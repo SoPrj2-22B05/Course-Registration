@@ -119,16 +119,15 @@ void Search(string command) {
 			searchs.push_back(token2);
 		}
 
-		if (searchs[0] == "/")
 
-			if (searchs.size() > 4) // 문법형식 위배 (인자가 5개 이상이 되는 경우)
-			{
-				cout << "데이터 파일에서 원하는 과목을 검색하는 명령어" << endl;
-				cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
-				cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
-				cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
-				sORf = false;
-			}
+		if (searchs.size() > 4) // 문법형식 위배 (인자가 5개 이상이 되는 경우)
+		{
+			cout << "데이터 파일에서 원하는 과목을 검색하는 명령어" << endl;
+			cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
+			cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
+			cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
+			sORf = false;
+		}
 
 		if ((searchs.size() <= 4) && searchs.size() > 0) {
 			// 자른 문자열 중 과목번호, 과목이름, 학년, 전공/교양을 구분합니다.
@@ -245,12 +244,12 @@ void Search(string command) {
 
 
 		//각 자료형에 분리돼서 들어간 거 확인
-
+		/*
 		cout << "grade :" << grade << endl;
 		cout << "id : " << id << endl;
 		cout << "name : " << name << endl;
 		cout << "major : " << major << endl;
-
+		*/
 
 		if (sORf == true) {
 			for (int i = 0; i < 10000; i++)
