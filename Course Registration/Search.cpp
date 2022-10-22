@@ -31,13 +31,20 @@ void Logout(string command) {
 	}
 }
 void Search(string command) {
+	//cout << command << endl; // 인자 확인
+	bool sORf = true;
+	if (command.back() == '/')
+	{
+		cout << "문법 형식에 위배됩니다. '/'는 문자열 사이에 있어야 합니다." << endl;
+		sORf = false;
+	}
+
 	stringstream stream;
 	stream.str(command);
 	string token1;
 	string arr[100] = { "0" }; //arr[0]에 find, arr[1]에 과목번호/과목이름/학년/학과 문자열이 들어옴
 	int i = 0;
-	bool sORf = true;
-
+	int SpecialCharacterIndex = 0;
 	while (stream >> token1) {
 		arr[i] = token1;
 		i++;
@@ -49,30 +56,51 @@ void Search(string command) {
 		}
 		else if (i == 2)
 		{
-			char* chars = new char[arr[1].length() + 1];
-			arr[1].copy(chars, arr[1].length());
-			chars[arr[1].length()] = '\0';
-			for (int j = 0; j < arr[1].length(); j++)
+			for (char j = 33; j <= 46; j++)
 			{
-				//cout << chars[j] << endl;
-				// 아스키코드 상의 특수문자가 있으면 오류 출력
-				// 과목이름이 알파벳으로만 구성되어 있으면 걍 알파벳만 아스키코드 포함시킨 뒤 not 하면 되는데...
-				// 한글이 껴있다보니 하트나 네모 등의 특수문자까지 제거하려면 모든 경우의 수를 일일이 다 제거해줘야 돼서 현실적으로 어려울 것 같습니다. 
-				if ((chars[j] >= 33 && chars[j] <= 46) || (chars[j] >= 58 && chars[j] <= 64) || (chars[j] >= 91 && chars[j] <= 95) || (chars[j] >= 123 && chars[j] <= 126)) // 47은 '/'라서 46까지만
+				if (arr[1].find(j) != string::npos)
 				{
-					cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
-					sORf = false;
+					SpecialCharacterIndex = 1;
+					break;
+				}
+			}
+			for (char j = 58; j <= 64; j++)
+			{
+				if (arr[1].find(j) != string::npos)
+				{
+					SpecialCharacterIndex = 1;
+					break;
+				}
+			}
+			for (char j = 91; j <= 95; j++)
+			{
+				if (arr[1].find(j) != string::npos)
+				{
+					SpecialCharacterIndex = 1;
+					break;
+				}
+			}
+			for (char j = 123; j <= 126; j++)
+			{
+				if (arr[1].find(j) != string::npos)
+				{
+					SpecialCharacterIndex = 1;
 					break;
 				}
 			}
 		}
+
 	}
+	if (SpecialCharacterIndex == 1)
+	{
+		cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
+		sORf = false;
+	}
+
+
+
 	if (sORf == true) { // 과목번호/과목이름/학년/학과 문자열에 공백이나 특수문자가 있으면 이 밑부분은 실행이 안 되도록 합니다.
-		command = arr[1]; //arr[1]에 
-		//cout << command << endl;
-		//cout << "arr0 : " << arr[0] << endl;
-		//cout << "arr1 : " << arr[1] << endl;
-		//cout << "arr2 : " << arr[2] << endl;
+		command = arr[1]; //find 뒤의 문자열이 들어갑니다.
 
 		int grade = 5;
 		string id = "0";
@@ -89,12 +117,8 @@ void Search(string command) {
 		while (getline(ss, token2, '/'))
 		{
 			searchs.push_back(token2);
-			//여기다가 인덱스 넣어서 숫자 체크하고
 		}
-		//밖으로 빼서 searchs[0 ~ 3]까지 숫자 넣고
-		// 널 포인터 접근 체크하고
-		// 문자열 하나하나 요소 다 검사해서 특수문자 있는지 다 빼고
-		// 특수문자 있으면 오류 출력하고 false 넣어서 종료.
+
 
 		if (searchs.size() > 4) // 문법형식 위배 (인자가 5개 이상이 되는 경우)
 		{
@@ -102,6 +126,7 @@ void Search(string command) {
 			cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
 			cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
 			cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
+			sORf = false;
 		}
 
 		if ((searchs.size() <= 4) && searchs.size() > 0) {
