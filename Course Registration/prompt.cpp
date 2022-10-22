@@ -12,6 +12,7 @@
 #include <vector>
 #include <atlconv.h>
 #define ORDER_NUM 5
+namespace fs = std::filesystem;
 using namespace std;
 
 void User_info_menu();
@@ -23,6 +24,7 @@ void alter_check(string str);
 void add_help_print();
 void del_help_print();
 void alter_help_print();
+bool start_check();
 wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
 boolean restart = false;
 string ID, name;
@@ -168,16 +170,15 @@ void Student_menu() {
         // 아스키코드 상의 특수문자가 있으면 오류 출력
         // 과목이름이 알파벳으로만 구성되어 있으면 걍 알파벳만 아스키코드 포함시킨 뒤 not 하면 되는데...
         // 한글이 껴있다보니 하트나 네모 등의 특수문자까지 제거하려면 모든 경우의 수를 일일이 다 제거해줘야 돼서 현실적으로 어려울 것 같습니다. 
-        if (!((chars[j]>=0 && chars[j]<=9)||chars[j]==47)) // 47은 '/'라서 46까지만
+        if (!((chars[j]>=48 && chars[j]<=57)||chars[j]==47)) // 47은 '/'라서 46까지만
         {
             cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
             sORf = false;
-            break;
         }
     }
 
     if (sORf) {
-        bool c1 = false;
+        bool check2 = false;
         if (i == 0) {
             print_manual();
             restart = true;
@@ -189,27 +190,33 @@ void Student_menu() {
             }
             else if (find[i].compare(stu_input[0]) == 0) {
                 Search(str);
-                c1 = true;
+                check2 = true;
             }
             else if (add[i].compare(stu_input[0]) == 0) {
-                add_check(stu_input[1]);
-                c1 = true;
+                if (start_check()) {
+                    add_check(stu_input[1]);
+                    check2 = true;
+                }
             }
             else if (del[i].compare(stu_input[0]) == 0) {
-                del_check(stu_input[1]);
-                c1 = true;
+                if (start_check()) {
+                    add_check(stu_input[1]);
+                    check2 = true;
+                }
             }
             else if (alter[i].compare(stu_input[0]) == 0) {
-                alter_check(stu_input[1]);
-                c1 = true;
+                if (start_check()) {
+                    add_check(stu_input[1]);
+                    check2 = true;
+                }
             }
         }
-        if (!c1) {  //나머지 입력
+        if (!check2) {  //나머지 입력
             print_manual();
 
         }
-        restart = true;
     }
+    restart = true;
     return;
 }
 
@@ -379,4 +386,17 @@ void alter_help_print() {
     cout << "동의어: ~  변경  ㅂㄱ  alter  alt" << endl;
     cout << "인자: 1개의 과목번호와 1개의 마일리지" << endl;
     cout << "동작: 과목번호와 마일리지를 입력받아, 해당 과목번호에 분배된 기존의 마일리지를 인자로 들어온 마일리지로 변경합니다." << endl;
+}
+
+bool start_check() {
+    wstring dir = fs::current_path();
+    wfstream isOn;
+    isOn.open(dir + L"\\Course_Registration_Is_On.txt");
+    if (!isOn.is_open()) {
+        cout << "아직 수강신청이 시작되지 않았습니다." << endl;
+        return false;
+    }
+    else {
+        return true;
+    }
 }
