@@ -10,6 +10,7 @@ namespace fs = std::filesystem;
 
 //string wstringTOstring(wstring src);
 bool addEnd = false;
+int priorityLevel = 0;
 
 //기본적으로 "Course_Registration_On_Off.txt" 파일이 존재해야 함
 //내용은 소문자로 바꿨을 때 on 또는 off 될 수 있는 것으로 (on On oN ON off OFF oFf 등등)
@@ -166,6 +167,7 @@ bool StartOrEnd(boolean command) {
 void Prioritizing() { //우선순위 정하는 함수
 	for (int i = 0; i < 10000; i++) {	//과목번호 0000부터 9999까지
 		addEnd = false;
+		priorityLevel = 0;
 		wstring subjectID, subjectName, major;
 		int grade, max;
 		if (Subject[i] == NULL) continue;	//해당 과목번호를 가지는 과목 없으면 건너뜀
@@ -239,6 +241,7 @@ void Prioritizing() { //우선순위 정하는 함수
 
 //높은 마일리지 베팅한 학생 뽑기
 void FirstPriority(vector<Student>& studentsWhoApplied, int& max, int& subGrade, wstring subMajor, wstring filename) {
+	priorityLevel++;
 	//cout << "1번째 우선순위 단계 도착" << endl;
 	//cout << studentsWhoApplied.size() << "명 중 " << max << "명을 뽑아야 함" << endl << endl;
 	vector<int> mileageVec;
@@ -294,6 +297,7 @@ void FirstPriority(vector<Student>& studentsWhoApplied, int& max, int& subGrade,
 
 //과목의 전공과 일치하는 전공을 가진 학생 뽑기
 void SecondPriority(vector<Student>& candidate, size_t& remainMax, int& subGrade, wstring subMajor, wstring filename) {
+	priorityLevel++;
 	//locale::global(locale::classic());
 	//cout << "2번째 우선순위 단계 도착" << endl;
 	//cout << candidate.size() << "명 중 " << remainMax << "명을 더 뽑아야 함" << endl << endl;
@@ -357,6 +361,7 @@ void SecondPriority(vector<Student>& candidate, size_t& remainMax, int& subGrade
 		//후보 중 전공 일치하는 학생 수와 출석부에 더 추가할 수 있는 remainMax비교해서 분기를 나눔
 		vector<Student> newCandidate;
 		vector<Student> definiteVec;
+		
 		if (coincidenceNum < remainMax) {
 			//불일치 애들 새 후보 벡터에 넣고 세 번째 우선순위 적용
 			for (int i = 0; i < majorCoincidence.size(); i++) {
@@ -397,6 +402,7 @@ void SecondPriority(vector<Student>& candidate, size_t& remainMax, int& subGrade
 
 //과목의 학년과 일치하는 학년을 가진 학생 뽑기
 void ThirdPriority(vector<Student>& candidate, size_t& remainMax, int& subGrade, wstring filename) {
+	priorityLevel++;
 	//locale::global(locale::classic());
 	//cout << "3번째 우선순위 단계 도착" << endl;
 	//cout << candidate.size() << "명 중 " << remainMax << "명을 더 뽑아야 함" << endl << endl;
@@ -458,6 +464,7 @@ void ThirdPriority(vector<Student>& candidate, size_t& remainMax, int& subGrade,
 
 //신청한 과목수가 적은 학생 뽑기
 void FourthPriority(vector<Student>& candidate, size_t& remainMax, wstring filename) {
+	priorityLevel++;
 	//locale::global(locale::classic());
 	//cout << "4번째 우선순위 단계 도착" << endl;
 	//cout << candidate.size() << "명 중 " << remainMax << "명을 더 뽑아야 함" << endl << endl;
@@ -525,6 +532,7 @@ void FourthPriority(vector<Student>& candidate, size_t& remainMax, wstring filen
 
 //취득학점이 적은 학생 뽑기
 void FifthPriority(vector<Student>& candidate, size_t& remainMax, wstring filename) {
+	priorityLevel++;
 	//locale::global(locale::classic());
 	//cout << "5번째 우선순위 단계 도착" << endl;
 	//cout << candidate.size() << "명 중 " << remainMax << "명을 더 뽑아야 함" << endl << endl;
@@ -532,6 +540,44 @@ void FifthPriority(vector<Student>& candidate, size_t& remainMax, wstring filena
 	//PrintCandidateInfo(candidate);
 	//cout << endl << endl;
 	vector<int> achievedCreditVec;
+	if (priorityLevel == 3) { //이 과목은 교양 과목	, 후보의 취득학점 데이터 추가
+		wfstream f(L"사용자 데이터 파일.txt");
+		if (f.is_open()) {
+			vector<wstring> data;
+			wstring line, str;
+			wstringstream ss;
+			int dataUpdateNum = 0;
+			while (getline(f, line)) {
+				if (dataUpdateNum == candidate.size()) {
+					break;
+				}
+				locale::global(locale("ko_KR.UTF-8"));
+				data.clear();
+				ss.clear();
+				line = trimFunc(line);
+				ss.str(line);
+				getline(ss, str, L'\t');
+				str = trimFunc(str);
+				//여기까지 했을 때 str은 학번(또는 교번)
+				//교번인 0000으로 시작하는 것은 for문 들어가기전에 거르면 좋음 - 추후 추가
+				for (int i = 0; i < candidate.size(); i++) {
+					if (str.compare(candidate[i].GetStudentNum()) == 0) {
+						getline(ss, str, L'\t');			//이름은 이미 갖고 있는 데이터라 건너뛰려고 한 번 읽음
+						while (getline(ss, str, L'\t')) {	//data에 전공, 학년, 취득학점 들어감
+							str = trimFunc(str);
+							if (str != L"") {
+								data.push_back(str);
+							}
+						}
+						//data에 있는 전공, 학년, 취득학점을 학생 객체의 데이터로 넣어줌
+						candidate[i].SetAchievedCredit(stoi(data[2]));
+						dataUpdateNum++;
+					}
+				}
+			}
+		}
+	}
+
 	for (int i = 0; i < candidate.size(); i++) {
 		achievedCreditVec.push_back(candidate[i].GetAchievedCredit());
 	}
@@ -572,6 +618,7 @@ void FifthPriority(vector<Student>& candidate, size_t& remainMax, wstring filena
 
 //먼저 과목을 추가한 학생 뽑기
 void SixthPriority(vector<Student>& candidate, size_t& remainMax, wstring filename) {
+	priorityLevel++;
 	//locale::global(locale::classic());
 	//cout << "6번째 우선순위 단계 도착" << endl;
 	//cout << candidate.size() << "명 중 " << remainMax << "명을 더 뽑아야 함" << endl;

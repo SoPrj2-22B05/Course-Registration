@@ -15,6 +15,7 @@ using namespace std;
 int main() {
 	
 	Integrity_Check();
+	/*
 	cout << "================ 과목 데이터 테스트 출력 ================" << endl;
 	for (int i = 0; i < 10000; i++) {
 		if (Subject[i] != NULL) {
@@ -27,6 +28,7 @@ int main() {
 			cout << Subject[i]->max << endl;
 		}
 	}
+	*/
 	while (true) { User_info_menu(); }
 	
 	return 0;
