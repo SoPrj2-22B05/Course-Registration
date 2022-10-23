@@ -1,3 +1,3 @@
 #pragma once
 void Search(string command);
-void Logout(string command);
+bool Logout(string command);

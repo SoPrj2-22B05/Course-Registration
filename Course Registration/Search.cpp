@@ -10,7 +10,7 @@
 #include "prompt.h"
 using namespace std;
 
-void Logout(string command) {
+bool Logout(string command) {
 
 	stringstream stream;
 	stream.str(command);
@@ -25,9 +25,10 @@ void Logout(string command) {
 
 	if (command.empty() == 0) {
 		cout << "오류 : logout 뒤에는 인자가 없어야 합니다." << endl;
+		return false;
 	}
 	if (command.empty() == 1) {
-		User_info_menu();
+		return true;
 	}
 }
 /*
