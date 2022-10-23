@@ -204,7 +204,7 @@ void Student_menu() {
             case 4:
                 alter_help_print();
             }
-            cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 공백이 있으면 안 됩니다." << endl;
+            //cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 공백이 있으면 안 됩니다." << endl;
             restart = true;
             return;
         }

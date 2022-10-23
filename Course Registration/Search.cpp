@@ -100,7 +100,8 @@ void Search(string command) {
 	if (SpecialCharacterIndex == 1) //특수문자 인덱스가 1이면 특수 문자가 있다는 뜻이므로 오류 출력
 	{
 		cout << "오류 : 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
-		sORf = false;
+		find_help_print();
+		return;
 	}
 	//cout << "arr[1] :" << arr[1] <<"a" << endl;
 
@@ -108,7 +109,8 @@ void Search(string command) {
 		if (arr[1].back() == '/' || arr[1].front() == '/') // 인자의 첫번째 문자나 마지막 문자가 /이면 오류 출력
 		{
 			cout << "오류 : '/'는 문자열 사이에 있어야 합니다." << endl;
-			sORf = false;
+			find_help_print();
+			return;
 		}
 	}
 
@@ -162,7 +164,6 @@ void Search(string command) {
 							sORf = false;
 							cout << "오류 : 검색요소가 중복됩니다." << endl;
 							cout << "'학년' 검색요소가 중복해서 존재합니다." << endl;
-							find_help_print();
 							return;
 						}
 						else if (i >= 5 && i <= 9 && grade == 10000) {
@@ -181,7 +182,6 @@ void Search(string command) {
 							sORf = false;
 							cout << "오류 : 검색요소가 중복됩니다." << endl;
 							cout << "'과목번호' 검색요소가 중복해서 존재합니다." << endl;
-							find_help_print();
 							return;
 						}
 					}
@@ -223,7 +223,6 @@ void Search(string command) {
 								sORf = false;
 								cout << "오류 : 검색요소가 중복됩니다." << endl;
 								cout << "'전공/교양' 검색요소가 중복해서 존재합니다." << endl;
-								find_help_print();
 								return;
 							}
 						}
@@ -238,7 +237,6 @@ void Search(string command) {
 								sORf = false;
 								cout << "오류 : 검색요소가 중복됩니다." << endl;
 								cout << "'과목이름' 검색요소가 중복해서 존재합니다." << endl;
-								find_help_print();
 								return;
 							}
 						}
@@ -252,7 +250,6 @@ void Search(string command) {
 						else {
 							cout << "오류 : 검색요소가 중복됩니다." << endl;
 							cout << "'과목이름' 검색요소가 중복해서 존재합니다." << endl;
-							find_help_print();
 							return;
 						}
 					}
@@ -264,7 +261,6 @@ void Search(string command) {
 						sORf = false;
 						cout << "오류 : 입력된 <전공/교양>에 해당 <학년>이 존재할 수 없습니다." << endl;
 						cout << "<전공/교양>이 ""교양""일 경우 <학년>은 반드시 0이어야 합니다." << endl;
-						find_help_print();
 						return;
 					}
 				}
@@ -274,8 +270,7 @@ void Search(string command) {
 					{
 						sORf = false;
 						cout << "오류 : 입력된 <전공/교양>에 해당 <학년>이 존재할 수 없습니다." << endl;
-						cout << "<전공/교양>이 ""교양""일 경우 <학년>은 반드시 0이어야 합니다." << endl;
-						find_help_print();
+						cout << "<전공/교양>이 ""학과""나 ""학부""로 끝날 경우 <학년>은 반드시 1,2,3,4중 하나여야 합니다." << endl;
 						return;
 					}
 				}
