@@ -239,7 +239,8 @@ void Student_menu() {
 
     switch (realOrderNum) {
     case 0:
-        return;
+        Logout(str);
+        check2 = true;
         break;
     case 1:
         Search(str);
