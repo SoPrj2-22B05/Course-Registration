@@ -25,12 +25,20 @@ void Alter(string command, string studentid, string studentname) {
 	int find_mileage;
 	bool find_id=false;
 	int back = 18 + studentname.length();
+	int credit_sum = Subject[stoi(id)]->credit;
 
 	while (getline(ss, token, '/'))
 	{
 		adds.push_back(token);
 	}
 	id = adds[0];
+
+	// 존재하는 과목인지 체크
+	if (Subject[stoi(id)] == NULL) {
+		cout << "오류 : 존재하지 않는 과목입니다." << endl;
+		return;
+	}
+
 	mileage = adds[1];
 	if (mileage.size() == 1) {
 		mileage = "0" + mileage;
@@ -46,11 +54,6 @@ void Alter(string command, string studentid, string studentname) {
 	USES_CONVERSION;
 	wstring wstuname(A2W(studentname.c_str()));
 
-	// 존재하는 과목인지 체크
-	if (Subject[stoi(id)] == NULL) {
-		cout << "오류 : 존재하지 않는 과목입니다." << endl;
-		return;
-	}
 	// 마일리지 오류
 	if (stoi(mileage) > 36) {
 		cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
@@ -64,11 +67,19 @@ void Alter(string command, string studentid, string studentname) {
 	f1.open(filename1);
 	if (f1.is_open()) {
 		while (getline(f1, line)) {
+			wstring tmpid = line.substr(0, 4);
 			wstring tmpmlg = line.substr(4);
 			mileage_sum += stoi(tmpmlg);
+			credit_sum += Subject[stoi(tmpid)]->credit;
 		}
 		f1.close();
 	}
+
+	if (credit_sum > 18) {
+		cout << "최대 이수 학점(18학점)을 초과하였습니다.";
+		return;
+	}
+
 	f1.open(filename1);
 	if (f1.is_open()) {
 		while (getline(f1, line)) {
