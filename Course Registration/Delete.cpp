@@ -18,6 +18,7 @@ void Delete(string command, string studentid, string studentname) {
 	int pos=-1;
 	int back = 36 + studentname.length();
 	int lineCount = 0;
+	int mileage;
 	vector<wstring>lines;
 
 	wstring wstuid, wid;
@@ -38,9 +39,11 @@ void Delete(string command, string studentid, string studentname) {
 		while (getline(f1, line)) {
 			lines.push_back(line);
 			wstring tmpid = line.substr(0, 4);
+			wstring tmpmlg = line.substr(4);
 			if (tmpid == wid) {
 				check = true;
 				pos = lineCount;
+				mileage = stoi(tmpmlg);
 			}
 			lineCount++;
 		}
@@ -52,7 +55,8 @@ void Delete(string command, string studentid, string studentname) {
 		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다." << endl;
 		return;
 	}
-	cout << "정말 삭제하시겠습니까? (Yes/...)";
+	cout << "[" << id << "] " << Subject[stoi(id)]->name << " " << mileage << "마일리지" << endl;
+	cout << "Course Registration > 정말 삭제하시겠습니까? (Yes/...)";
 	string dcheck;
 	cin >> dcheck;
 	cin.ignore();

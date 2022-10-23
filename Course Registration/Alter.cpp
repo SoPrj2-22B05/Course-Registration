@@ -25,21 +25,26 @@ void Alter(string command, string studentid, string studentname) {
 	int find_mileage;
 	bool find_id=false;
 	int back = 18 + studentname.length();
+	bool c1, c2, c3;
+	c1 = c2 = c3 = true;
 
 	while (getline(ss, token, '/'))
 	{
 		adds.push_back(token);
 	}
 	id = adds[0];
+	mileage = adds[1];
 
 	// 존재하는 과목인지 체크
 	if (Subject[stoi(id)] == NULL) {
 		cout << "오류 : 존재하지 않는 과목입니다." << endl;
+		if (stoi(mileage) > 36) {
+			cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
+		}
 		return;
 	}
 	int credit_sum = Subject[stoi(id)]->credit;
 
-	mileage = adds[1];
 	if (mileage.size() == 1) {
 		mileage = "0" + mileage;
 	}
@@ -56,8 +61,8 @@ void Alter(string command, string studentid, string studentname) {
 
 	// 마일리지 오류
 	if (stoi(mileage) > 36) {
-		cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
-		return;
+		//cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
+		c1 = false;
 	}
 
 	// 마일리지 저장 과정
@@ -76,8 +81,8 @@ void Alter(string command, string studentid, string studentname) {
 	}
 
 	if (credit_sum > 18) {
-		cout << "최대 이수 학점(18학점)을 초과하였습니다.";
-		return;
+		//cout << "최대 이수 학점(18학점)을 초과하였습니다.";
+		c2 = false;
 	}
 
 	f1.open(filename1);
@@ -88,21 +93,29 @@ void Alter(string command, string studentid, string studentname) {
 			if (tmpid == wid) { // 사용자 파일에 존재
 				mileage_sum -= stoi(tmpmlg);
 				if (mileage_sum > 72) {
-					cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다." << endl;
-					return;
+					//cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다." << endl;
+					c3 = false;
 				}
 				find_id = true;
-				cout << "[" << id << "] " << Subject[stoi(id)]->name << " " << stoi(tmpmlg) << "->" << mileage << "마일리지로 변경" << endl;
-				cout << "이대로 변경하시겠습니까? (Yes/...)";
-				cin >> check;
-				if (check == "Yes") {
-					cout << "성공적으로 변경되었습니다!" << endl;
-					f1.seekg(-9, ios::cur);
-					f1 << wid + L'\t' + wmileage + L'\n';
-					f1.seekg(9, ios::cur);
+				if (c1 && c2 && c3) {
+					cout << "[" << id << "] " << Subject[stoi(id)]->name << " " << stoi(tmpmlg) << "->" << mileage << "마일리지로 변경" << endl;
+					cout << "이대로 변경하시겠습니까? (Yes/...)";
+					cin >> check;
+					if (check == "Yes") {
+						cout << "성공적으로 변경되었습니다!" << endl;
+						f1.seekg(-9, ios::cur);
+						f1 << wid + L'\t' + wmileage + L'\n';
+						f1.seekg(9, ios::cur);
+					}
+					else {
+						cin.ignore();
+						return;
+					}
 				}
 				else {
-					cin.ignore();
+					if (!c1)cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
+					if (!c2)cout << "최대 이수 학점(18학점)을 초과하였습니다.";
+					if (!c3)cout << "오류 : 신청한 마일리지가 남은 마일리지를 초과합니다." << endl;
 					return;
 				}
 				break;
