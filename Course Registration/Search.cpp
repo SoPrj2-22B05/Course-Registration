@@ -30,8 +30,16 @@ void Logout(string command) {
 		User_info_menu();
 	}
 }
+/*
+Search("find 1/1/1/1/1");
+Search("find 5");
+Search("find ㅋㅍㅌ");
+Search("find 전공/0");
+Search("find 0/컴퓨터");
+*/
+
 void Search(string command) {
-	//cout << command << endl; // 인자 확인
+	//cout << "Search로 받는 인자 : " << command << endl; // 인자 확인
 	bool sORf = true;
 	stringstream stream;
 	stream.str(command);
@@ -87,21 +95,27 @@ void Search(string command) {
 		}
 
 	}
+
 	if (SpecialCharacterIndex == 1) //특수문자 인덱스가 1이면 특수 문자가 있다는 뜻이므로 오류 출력
 	{
 		cout << "오류 : 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
 		sORf = false;
 	}
+	//cout << "arr[1] :" << arr[1] <<"a" << endl;
 
-	if (arr[1].back() == '/' || arr[1].front() == '/') // 인자의 첫번째 문자나 마지막 문자가 /이면 오류 출력
-	{
-		cout << "오류 : '/'는 문자열 사이에 있어야 합니다." << endl;
-		sORf = false;
+	if (arr[1].empty() == 0) {
+		if (arr[1].back() == '/' || arr[1].front() == '/') // 인자의 첫번째 문자나 마지막 문자가 /이면 오류 출력
+		{
+			cout << "오류 : '/'는 문자열 사이에 있어야 합니다." << endl;
+			sORf = false;
+		}
 	}
 
 	if (sORf == true) { // 과목번호/과목이름/학년/학과 문자열에 공백이나 특수문자가 있으면 이 밑부분은 실행이 안 되도록 합니다.
+
 		command = arr[1]; //find 뒤의 문자열이 들어갑니다.
-		int grade = 5;
+		//cout << "command : " << command << endl;
+		int grade = 10000;
 		string id = "0";
 		string major = "0";
 		string name = "0";
@@ -141,18 +155,17 @@ void Search(string command) {
 				{
 					if (search.size() == 1) // 문자열의 길이가 1이면 학년에 해당 숫자를 넣어주고
 					{
-						if (grade == 5)
+						if (i >= 0 && i <= 4 && grade == 10000)
 						{
 							grade = i;
 						}
-						else
+						else if (grade != 10000)
 						{
 							sORf = false;
 							cout << "오류 : 검색요소가 중복됩니다." << endl;
 							cout << "'학년' 검색요소가 중복해서 존재합니다." << endl;
 							break;
 						}
-
 					}
 					else if (search.size() == 4) // 문자열의 길이가 4면 과목번호에 넣어줍니다.
 					{
@@ -229,12 +242,25 @@ void Search(string command) {
 						}
 					}
 				}
-				if (major == "교양" && grade != 0 && grade != 5)
+				if (major == "교양")
 				{
-					sORf = false;
-					cout << "오류 : 입력된 <전공/교양>에 해당 <학년>이 존재할 수 없습니다." << endl;
-					cout << "<전공/교양>이 ""교양""일 경우 <학년>은 반드시 0이어야 합니다." << endl;
-					break;
+					if (grade != 0 && grade != 10000)
+					{
+						sORf = false;
+						cout << "오류 : 입력된 <전공/교양>에 해당 <학년>이 존재할 수 없습니다." << endl;
+						cout << "<전공/교양>이 ""교양""일 경우 <학년>은 반드시 0이어야 합니다." << endl;
+						break;
+					}
+				}
+				else
+				{
+					if (grade == 0)
+					{
+						sORf = false;
+						cout << "오류 : 입력된 <전공/교양>에 해당 <학년>이 존재할 수 없습니다." << endl;
+						cout << "<전공/교양>이 ""교양""일 경우 <학년>은 반드시 0이어야 합니다." << endl;
+						break;
+					}
 				}
 
 			}
