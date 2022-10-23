@@ -250,17 +250,29 @@ void Student_menu() {
             add_check(stu_input[1]);
             check2 = true;
         }
+        else {
+            restart = true;
+            return;
+        }
         break;
     case 3:
         if (start_check()) {
             del_check(stu_input[1]);
             check2 = true;
         }
+        else {
+            restart = true;
+            return;
+        }
         break;
     case 4:
         if (start_check()) {
             alter_check(stu_input[1]);
             check2 = true;
+        }
+        else {
+            restart = true;
+            return;
         }
     }
 
