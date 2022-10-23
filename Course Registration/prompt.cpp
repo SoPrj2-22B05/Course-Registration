@@ -204,12 +204,12 @@ void Student_menu() {
             case 4:
                 alter_help_print();
             }
-            //cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 공백이 있으면 안 됩니다." << endl;
+            cout << "문법 형식에 위배됩니다. 입력 인자들 사이에 공백이 있으면 안 됩니다." << endl;
             restart = true;
             return;
         }
 
-        /*
+        
         char* chars = new char[stu_input[1].length() + 1];
         stu_input[1].copy(chars, stu_input[1].length());
         chars[stu_input[1].length()] = '\0';
@@ -225,7 +225,7 @@ void Student_menu() {
                 return;
             }
         }
-        */
+        
     }
     
     bool check2 = false;

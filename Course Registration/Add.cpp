@@ -69,7 +69,6 @@ void Add(string command, string studentid, string studentname) {
 		}
 		f1.close();
 	}
-
 	// 과목 중복 체크
 	ss.clear();
 	string compare_time = Subject[stoi(id)]->time;
@@ -86,13 +85,17 @@ void Add(string command, string studentid, string studentname) {
 		{
 			find_times.push(token);
 		}
-		for (int i = 0; i < compare_times.size(); i++) {
-			//cout << find_times.front().substr(0, 2) << " " << compare_times[i].substr(0, 2) << endl;
-			if (find_times.front().substr(0, 2) == compare_times[i].substr(0, 2)) { // 요일 비교
-				int f_left = stoi(find_time[i].substr(2, 2));
-				int f_right = stoi(find_time[i].substr(5, 2));
-				int c_left = stoi(compare_times[i].substr(2, 2));
-				int c_right = stoi(compare_times[i].substr(5, 2));
+	}
+	while(!find_times.empty()){
+		for (int j = 0; j < compare_times.size(); j++) {
+			string now = find_times.front();
+			//cout << now.substr(0, 2) << " " << compare_times[j].substr(0, 2) << endl;
+			if (find_times.front().substr(0, 2) == compare_times[j].substr(0, 2)) { // 요일 비교
+				int f_left = stoi(now.substr(2, 2));
+				int f_right = stoi(now.substr(5, 2));
+				int c_left = stoi(compare_times[j].substr(2, 2));
+				int c_right = stoi(compare_times[j].substr(5, 2));
+				//cout << f_left << " " << f_right << " " << c_left << "  " << c_right << endl;
 				if ((f_left >= c_left && f_left < c_right) || (f_right > c_left && f_right <= c_right)) {
 					cout << "오류 : 추가하려는 과목과 강의시간이 겹치는 과목이 이미 추가되었습니다." << endl;
 					return;
