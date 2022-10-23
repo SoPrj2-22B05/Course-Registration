@@ -94,9 +94,7 @@ void Alter(string command, string studentid, string studentname) {
 				find_id = true;
 				cout << "[" << id << "] " << Subject[stoi(id)]->name << " " << stoi(tmpmlg) << "->" << mileage << "마일리지로 변경" << endl;
 				cout << "이대로 변경하시겠습니까? (Yes/...)";
-				cin.ignore();
 				cin >> check;
-				cin.ignore();
 				if (check == "Yes") {
 					cout << "성공적으로 변경되었습니다!" << endl;
 					f1.seekg(-9, ios::cur);
