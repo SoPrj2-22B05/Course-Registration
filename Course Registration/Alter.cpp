@@ -25,7 +25,6 @@ void Alter(string command, string studentid, string studentname) {
 	int find_mileage;
 	bool find_id=false;
 	int back = 18 + studentname.length();
-	int credit_sum = Subject[stoi(id)]->credit;
 
 	while (getline(ss, token, '/'))
 	{
@@ -38,6 +37,7 @@ void Alter(string command, string studentid, string studentname) {
 		cout << "오류 : 존재하지 않는 과목입니다." << endl;
 		return;
 	}
+	int credit_sum = Subject[stoi(id)]->credit;
 
 	mileage = adds[1];
 	if (mileage.size() == 1) {
@@ -94,6 +94,7 @@ void Alter(string command, string studentid, string studentname) {
 				find_id = true;
 				cout << "[" << id << "] " << Subject[stoi(id)]->name << " " << stoi(tmpmlg) << "->" << mileage << "마일리지로 변경" << endl;
 				cout << "이대로 변경하시겠습니까? (Yes/...)";
+				cin.ignore();
 				cin >> check;
 				cin.ignore();
 				if (check == "Yes") {
