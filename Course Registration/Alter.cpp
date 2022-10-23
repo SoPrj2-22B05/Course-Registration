@@ -101,7 +101,10 @@ void Alter(string command, string studentid, string studentname) {
 					f1 << wid + L'\t' + wmileage + L'\n';
 					f1.seekg(9, ios::cur);
 				}
-				else return;
+				else {
+					cin.ignore();
+					return;
+				}
 				break;
 			}
 		}
