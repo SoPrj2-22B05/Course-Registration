@@ -23,6 +23,11 @@ void Delete(string command, string studentid, string studentname) {
 	wstring wstuid, wid;
 	wstuid.assign(studentid.begin(), studentid.end());
 	wid.assign(id.begin(), id.end());
+
+	if (Subject[stoi(id)] == NULL) {
+		cout << "오류 : 수강 신청 삭제 대상 과목이 없습니다." << endl;
+		return;
+	}
 	string subname = Subject[stoi(id)]->name;
 
 	string filename1 = studentid + '_' + studentname + "_수강신청목록.txt";
