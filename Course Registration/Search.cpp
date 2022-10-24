@@ -100,7 +100,11 @@ void Search(string command)
 
 	if (SpecialCharacterIndex == 1) //특수문자 인덱스가 1이면 특수 문자가 있다는 뜻이므로 오류 출력
 	{
-		cout << "오류 : 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
+		//cout << "오류 : 입력 인자들 사이에 '/'를 제외한 특수 문자가 있으면 안 됩니다." << endl;
+		cout << "데이터 파일에서 원하는 과목을 검색하는 명령어" << endl;
+		cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
+		cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
+		cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
 		sORf = false;
 	}
 	//cout << "arr[1] :" << arr[1] <<"a" << endl;
@@ -108,7 +112,11 @@ void Search(string command)
 	if (arr[1].empty() == 0) {
 		if (arr[1].back() == '/' || arr[1].front() == '/') // 인자의 첫번째 문자나 마지막 문자가 /이면 오류 출력
 		{
-			cout << "오류 : '/'는 문자열 사이에 있어야 합니다." << endl;
+			//cout << "오류 : '/'는 문자열 사이에 있어야 합니다." << endl;
+			cout << "데이터 파일에서 원하는 과목을 검색하는 명령어" << endl;
+			cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
+			cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
+			cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
 			sORf = false;
 		}
 	}
@@ -162,6 +170,15 @@ void Search(string command)
 						{
 							grade = i;
 						}
+						else if (i > 4)
+						{
+							sORf = false;
+							cout << "데이터 파일에서 원하는 과목을 검색하는 명령어" << endl;
+							cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
+							cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
+							cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
+
+						}
 						else if (grade != 10000)
 						{
 							sORf = false;
@@ -196,10 +213,16 @@ void Search(string command)
 					else //숫자인 문자열의 길이가 1도 아니고 4도 아닐 경우
 					{
 						sORf = false;
+						/*
 						cout << "오류 : 허용되지 않는 입력입니다.." << endl;
 						cout << "'과목이름' 검색요소엔 영어나 한글이 하나 이상 들어가야 합니다." << endl;
 						cout << "'과목번호' 검색요소는 4자리 숫자로만 이루어집니다." << endl;
 						cout << "'학년' 검색요소는 1자리 숫자로만 이루어집니다." << endl;
+						*/
+						cout << "데이터 파일에서 원하는 과목을 검색하는 명령어" << endl;
+						cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
+						cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
+						cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
 						break;
 					}
 
@@ -256,7 +279,10 @@ void Search(string command)
 							koreanVec[i] == "ㅣ")
 						{
 							sORf = false;
-							cout << "오류 : 과목이름은 자모음 결합이 완성된 한글이어야 합니다." << endl;
+							cout << "데이터 파일에서 원하는 과목을 검색하는 명령어" << endl;
+							cout << "동의어 : # 검색 ㄱㅅ find f" << endl;
+							cout << "인자 : 검색요소(과목번호, 과목이름, 학년, 전공/교양)" << endl;
+							cout << "동작 : 검색요소를 입력받고, 필터링된 과목들을 출력합니다." << endl;
 							break;
 						}
 					}
