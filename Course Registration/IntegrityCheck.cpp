@@ -72,6 +72,7 @@ void check_File_Exist() {
 	wfstream f2(L"사용자 데이터 파일.txt");
 	if (!f1.is_open() || !f2.is_open()) {
 		wcout << L"오류 : 홈 경로 " << dir << L" 에 과목 데이터 파일 또는 사용자 데이터 파일이 없습니다.프로그램을 종료합니다." << endl;
+		system("pause");
 		exit(0);
 	}
 	f1.close();
@@ -347,6 +348,7 @@ void print_Errors() {
 
 	if (has_Error) {
 		cout << "프로그램을 종료합니다." << endl;
+		system("pause");
 		exit(0);
 	}
 }

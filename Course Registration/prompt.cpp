@@ -48,6 +48,7 @@ void User_info_menu() {
 
     if (ID.compare("종료") == 0 || ID.compare("exit") == 0) {
         cout << "프로그램을 종료합니다.";
+        system("pause");
         exit(0);
     }
 

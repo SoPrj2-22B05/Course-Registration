@@ -112,6 +112,7 @@ tryAgain:
 			itr2++;
 		}
 		// 전체 프로그램을 종료
+		system("pause");
 		exit(0);
 	}
 	else {
