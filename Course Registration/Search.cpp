@@ -39,7 +39,8 @@ Search("find 전공/0");
 Search("find 0/컴퓨터");
 */
 
-void Search(string command) {
+void Search(string command)
+{
 	//cout << "Search로 받는 인자 : " << command << endl; // 인자 확인
 	bool sORf = true;
 	stringstream stream;
@@ -115,6 +116,7 @@ void Search(string command) {
 	if (sORf == true) { // 과목번호/과목이름/학년/학과 문자열에 공백이나 특수문자가 있으면 이 밑부분은 실행이 안 되도록 합니다.
 
 		command = arr[1]; //find 뒤의 문자열이 들어갑니다.
+
 		//cout << "command : " << command << endl;
 		int grade = 10000;
 		string id = "0";
@@ -142,7 +144,7 @@ void Search(string command) {
 			sORf = false;
 		}
 
-		if ((searchs.size() <= 4) && searchs.size() > 0) {
+		if ((searchs.size() <= 4) && searchs.size() >= 1) {
 			// 자른 문자열 중 과목번호, 과목이름, 학년, 전공/교양을 구분합니다.
 			for (auto search : searchs)
 			{
@@ -205,7 +207,61 @@ void Search(string command) {
 				}
 				else //문자열을 정수형으로 바꾸는데 실패 
 				{
-					if (search.length() >= 4) {
+					vector<string> koreanVec;
+					for (int i = 0; i < search.length(); i += 2)
+					{
+						koreanVec.push_back(search.substr(i, 2));
+					}
+					for (int j = 0; j < koreanVec.size(); j++)
+					{
+						if (koreanVec[i] == "ㄱ" ||
+							koreanVec[i] == "ㄴ" ||
+							koreanVec[i] == "ㄷ" ||
+							koreanVec[i] == "ㄹ" ||
+							koreanVec[i] == "ㅁ" ||
+							koreanVec[i] == "ㅂ" ||
+							koreanVec[i] == "ㅅ" ||
+							koreanVec[i] == "ㅇ" ||
+							koreanVec[i] == "ㅈ" ||
+							koreanVec[i] == "ㅊ" ||
+							koreanVec[i] == "ㅌ" ||
+							koreanVec[i] == "ㅋ" ||
+							koreanVec[i] == "ㅍ" ||
+							koreanVec[i] == "ㅎ" ||
+							koreanVec[i] == "ㅃ" ||
+							koreanVec[i] == "ㅉ" ||
+							koreanVec[i] == "ㄸ" ||
+							koreanVec[i] == "ㄲ" ||
+							koreanVec[i] == "ㅆ" ||
+							koreanVec[i] == "ㅏ" ||
+							koreanVec[i] == "ㅐ" ||
+							koreanVec[i] == "ㅑ" ||
+							koreanVec[i] == "ㅒ" ||
+							koreanVec[i] == "ㅓ" ||
+							koreanVec[i] == "ㅔ" ||
+							koreanVec[i] == "ㅕ" ||
+							koreanVec[i] == "ㅖ" ||
+							koreanVec[i] == "ㅗ" ||
+							koreanVec[i] == "ㅘ" ||
+							koreanVec[i] == "ㅙ" ||
+							koreanVec[i] == "ㅚ" ||
+							koreanVec[i] == "ㅛ" ||
+							koreanVec[i] == "ㅜ" ||
+							koreanVec[i] == "ㅝ" ||
+							koreanVec[i] == "ㅞ" ||
+							koreanVec[i] == "ㅟ" ||
+							koreanVec[i] == "ㅠ" ||
+							koreanVec[i] == "ㅡ" ||
+							koreanVec[i] == "" ||
+							koreanVec[i] == "ㅣ")
+						{
+							sORf = false;
+							cout << "오류 : 과목이름은 자모음 결합이 완성된 한글이어야 합니다." << endl;
+							break;
+						}
+					}
+					if (search.length() >= 4)
+					{
 						if (search.substr(search.length() - 4) == "학과" || search.substr(search.length() - 4) == "학부" || search == "교양")
 						{
 							if (major == "0")
@@ -253,9 +309,9 @@ void Search(string command) {
 						break;
 					}
 				}
-				else
+				else if (major != "0") // major가 0도 아니고 교양도 아님 즉 전공임
 				{
-					if (grade == 0)
+					if (grade == 0) //근데 학년이 0이면 오류 출력
 					{
 						sORf = false;
 						cout << "오류 : 입력된 <전공/교양>에 해당 <학년>이 존재할 수 없습니다." << endl;
@@ -269,14 +325,15 @@ void Search(string command) {
 
 
 		//각 자료형에 분리돼서 들어간 거 확인
-		/*
+	/*
 		cout << "grade :" << grade << endl;
 		cout << "id : " << id << endl;
 		cout << "name : " << name << endl;
 		cout << "major : " << major << endl;
-		*/
+	*/
 
-		if (sORf == true) {
+		if (sORf == true)
+		{
 			for (int i = 0; i < 10000; i++)
 			{
 				if (Subject[i] != NULL) {
