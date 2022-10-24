@@ -116,8 +116,7 @@ void Add(string command, string studentid, string studentname) {
 				/*cout << f_left << " " << f_right << " " << c_left << "  " << c_right << endl;
 				cout << (f_left >= c_left && f_left < c_right) << (f_right > c_left && f_right <= c_right)<<
 					(f_left <= c_left && f_right >= c_right)<< (f_left >= c_left && f_left <= c_right && f_right >= c_left && f_right <= c_right) << endl;*/
-				if ((f_left >= c_left && f_left < c_right && f_right >= c_right) || (f_left <= c_left && f_right > c_left && f_right <= c_right)
-					|| (f_left <= c_left && f_right >= c_right) || (f_left >= c_left && f_left <= c_right && f_right >= c_left && f_right <= c_right)) {
+				if ((c_left>=f_left&&c_left<f_right)||(c_right>f_left&&c_right<=f_right)||(c_left<=f_left&&c_right>=f_right)) {
 					//cout << "오류 : 추가하려는 과목과 강의시간이 겹치는 과목이 이미 추가되었습니다." << endl;
 					c3 = false;
 					found_time.push_back(find_times.front().first);
