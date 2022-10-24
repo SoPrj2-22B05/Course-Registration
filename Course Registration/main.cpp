@@ -31,5 +31,6 @@ int main() {
 	*/
 	while (true) { User_info_menu(); }
 	
+
 	return 0;
 }
