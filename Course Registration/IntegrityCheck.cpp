@@ -46,6 +46,8 @@ bool check_Sgrade(wstring const& str);
 bool check_Stime(wstring const& str);
 bool check_Scapacity(wstring const& str);
 bool check_Smajor_Sgrade_Match(wstring const& smajor, wstring const& sgrade, int line);
+bool check_Sprof(wstring const& str);
+bool check_Sroom(wstring const& str);
 
 bool check_UID(wstring const& str);
 bool check_Uname(wstring const& str);
@@ -108,7 +110,7 @@ void check_Subject_File() {
 			}
 		}
 
-		if (data.size() != 7) { // ¿ä¼Ò 7°³ÀÎÁö Ã¼Å©
+		if (data.size() != 9) { // ¿ä¼Ò 9°³ÀÎÁö Ã¼Å©
 			Subject_File_Grammar_Error_Line.push_back(lineCount);
 			continue;
 		}
@@ -150,6 +152,14 @@ void check_Subject_File() {
 		}
 		if (!check_Smajor_Sgrade_Match(data[3], data[4],lineCount)) { // Àü°ø/±³¾ç - ÇÐ³â ¸ÅÄª Ã¼Å©
 			is_unmatched_major_grade = true;
+		}
+		if (!check_Sprof(data[7])) { // ´ã´ç±³¼ö Ã¼Å©
+			Subject_File_Grammar_Error_Line.push_back(lineCount);
+			continue;
+		}
+		if (!check_Sroom(data[8])) { // °­ÀÇ½Ç Ã¼Å©
+			Subject_File_Grammar_Error_Line.push_back(lineCount);
+			continue;
 		}
 
 		//for (int i = 0; i < data.size(); i++) {
@@ -502,6 +512,39 @@ bool check_Smajor_Sgrade_Match(wstring const& smajor, wstring const& sgrade, int
 			zero_major_lines.push_back(line);
 			return false;
 		}
+	}
+	return true;
+}
+
+bool check_Sprof(wstring const& str) {
+	// °¢ ¹®ÀÚ´Â ¼ýÀÚ, ·Î¸¶ÀÚ ´ë¼Ò¹®ÀÚ, ÀÚ¸ð Á¶ÇÕÀÌ ¿Ï¼ºµÈ ÇÑ±Û
+	// ¼ýÀÚ°¡ Æ÷ÇÔµÉ °æ¿ì Á¦ÀÏ ¸¶Áö¸· ÇÑ ¹®ÀÚ¿¡¸¸ »ç¿ë °¡´É
+	// ±æÀÌ´Â ¼ýÀÚ¸¦ Á¦¿ÜÇÏ°í 1 ÀÌ»ó 10 ÀÌÇÏ
+	// °ø¹é·ù´Â ÀüÇô µé¾î°¡ÀÖÁö ¾ÊÀ½
+	wregex prof_reg(L"^[°¡-ÆRa-zA-Z]{1,10}[0-9]?$");
+	if (!regex_match(str, prof_reg)) {
+		return false;
+	}
+	return true;
+}
+
+bool check_Sroom(wstring const& str) {
+	// [°Ç¹°] + ¼ýÀÚ 3°³
+	wregex room_reg(L"^[»õ¹ý°øÀÎ¿¹][0-9]{3}$");
+	if (!regex_match(str, room_reg)) {
+		return false;
+	}
+
+	// ¸Ç ¿ÞÂÊ ¼ýÀÚ 1 ÀÌ»ó 5 ÀÌÇÏ
+	int floor = stoi(str.substr(1, 1));	
+	if (floor < 1 || floor > 5) {
+		return false;
+	}
+
+	// ¿À¸¥ÂÊ µÎ ¼ýÀÚ 1 ÀÌ»ó 19 ÀÌÇÏ
+	int roomNum = stoi(str.substr(2, 2));
+	if (roomNum < 1 || roomNum > 19) {
+		return false;
 	}
 	return true;
 }
