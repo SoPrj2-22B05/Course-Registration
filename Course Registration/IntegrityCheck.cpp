@@ -61,7 +61,10 @@ bool check_Acquisition_Credit(wstring const& str);
 
 string wstr2str(const std::wstring& _src);
 wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
+
 void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring& stime, int line);
+void print_Sprof_Stime_redundancy();
+void print_Sroom_Stime_redundancy();
 
 
 
@@ -172,7 +175,7 @@ void check_Subject_File() {
 		//	wcout << data[i] + L" + ";
 		//}
 		//cout << endl;
-		
+
 		// 데이터 배열에 추가
 		SubjectData* tmp = new SubjectData();
 		tmp->id = wstr2str(data[0]);
@@ -182,7 +185,7 @@ void check_Subject_File() {
 		tmp->grade = stoi(data[4]);
 		tmp->time = wstr2str(data[5]);
 		tmp->max = stoi(data[6]);
-		
+
 		Subject[stoi(data[0])] = tmp;
 	}
 	gotoClassic;
@@ -287,7 +290,7 @@ void print_Errors() {
 			(i == num_G_error - 1) ? printf("\n") : printf(",");
 		}
 	}
-	else if (is_duplicated_SID || is_unmatched_major_grade) { // 의미 오류 있는 경우
+	else if (is_duplicated_SID || is_unmatched_major_grade || is_duplicated_time_prof || is_duplicated_time_room) { // 의미 오류 있는 경우
 		has_Error = true;
 		printf("오류 : 과목 데이터 파일의 의미 규칙이 올바르지 않습니다.\n");
 
@@ -320,6 +323,16 @@ void print_Errors() {
 				printf("%d행", zero_major_lines[i]);
 				(i == error_size - 1) ? printf("\n") : printf(",");
 			}
+		}
+
+		// 담당교수 시간표 중복 있으면 출력
+		if (is_duplicated_time_prof) {
+			print_Sprof_Stime_redundancy();
+		}
+
+		// 강의실 시간표 중복 있으면 출력
+		if (is_duplicated_time_room) {
+			print_Sroom_Stime_redundancy();
 		}
 	}
 
@@ -542,7 +555,7 @@ bool check_Sroom(wstring const& str) {
 	}
 
 	// 맨 왼쪽 숫자 1 이상 5 이하
-	int floor = stoi(str.substr(1, 1));	
+	int floor = stoi(str.substr(1, 1));
 	if (floor < 1 || floor > 5) {
 		return false;
 	}
@@ -704,4 +717,48 @@ void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring&
 		}
 		else { return; }
 	}
+}
+
+void print_Sprof_Stime_redundancy() {
+	gotoUTF;
+	map<int, wchar_t> days = { {0,L'월'},{1,L'화',},{2,L'수'},{3,L'목'},{4,L'금'},{5,L'토'},{6,L'일'} };
+
+	for (auto it = profTimeTable.begin(); it != profTimeTable.end(); it++) {
+		for (int j = 0; j < 7; j++) {
+			for (int i = 0; i < 22; i++) {
+				int v_size = ((*(it->second))[i][j]).size();
+				if (v_size > 1) {
+					wcout << "\"" << it->first << "\" ";
+					wprintf(L"교수의 과목들 중 \"%c%02d교시\"가 겹치는 과목들이 존재합니다.\n#", days[j], i + 1);
+					for (int k = 0; k < v_size; k++) {
+						wprintf(L"%d행", ((*(it->second))[i][j])[k]);
+						(k == v_size - 1) ? printf("\n") : printf(",");
+					}
+				}
+			}
+		}
+	}
+	gotoClassic;
+}
+
+void print_Sroom_Stime_redundancy() {
+	gotoUTF;
+	map<int, wchar_t> days = { {0,L'월'},{1,L'화',},{2,L'수'},{3,L'목'},{4,L'금'},{5,L'토'},{6,L'일'} };
+
+	for (auto it = roomTimeTable.begin(); it != roomTimeTable.end(); it++) {
+		for (int j = 0; j < 7; j++) {
+			for (int i = 0; i < 22; i++) {
+				int v_size = ((*(it->second))[i][j]).size();
+				if (v_size > 1) {
+					wcout << "\"" << it->first << "\" ";
+					wprintf(L"강의실에서 열린 과목들 중 \"%c%02d교시\"가 겹치는 과목들이 존재합니다.\n#", days[j], i + 1);
+					for (int k = 0; k < v_size; k++) {
+						wprintf(L"%d행", ((*(it->second))[i][j])[k]);
+						(k == v_size - 1) ? printf("\n") : printf(",");
+					}
+				}
+			}
+		}
+	}
+	gotoClassic;
 }
