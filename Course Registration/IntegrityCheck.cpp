@@ -32,6 +32,10 @@ int admin_count = 0;
 bool is_duplicated_UID = false;
 map<wstring, vector<int>> UIDs; // <학번(교번), 해당하는 행들>
 
+bool is_duplicated_time_prof;	// 담당교수 - 강의시간 중복 체크 (중간 이후 새로 추가)
+bool is_duplicated_time_room;	// 강의실 - 강의시간 중복 체크 (중간 이후 새로 추가)
+map<wstring, vector<int>(*)[22][7]> profTimeTable;	//담당교수 map (중간 이후 새로 추가)
+map<wstring, vector<int>(*)[22][7]> roomTimeTable;	//강의실 map (중간 이후 새로 추가)
 
 void check_File_Exist();
 void check_Subject_File();
@@ -57,6 +61,7 @@ bool check_Acquisition_Credit(wstring const& str);
 
 string wstr2str(const std::wstring& _src);
 wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
+void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring& stime, int line);
 
 
 
@@ -161,12 +166,13 @@ void check_Subject_File() {
 			Subject_File_Grammar_Error_Line.push_back(lineCount);
 			continue;
 		}
+		save_Sprof_Sroom_Stime(data[7], data[8], data[5], lineCount);
 
 		//for (int i = 0; i < data.size(); i++) {
 		//	wcout << data[i] + L" + ";
 		//}
 		//cout << endl;
-
+		
 		// 데이터 배열에 추가
 		SubjectData* tmp = new SubjectData();
 		tmp->id = wstr2str(data[0]);
@@ -616,4 +622,86 @@ wstring& trim(wstring& s, const wchar_t* t) {
 	s.erase(0, s.find_first_not_of(t));
 	s.erase(s.find_last_not_of(t) + 1);
 	return s;
+}
+
+void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring& stime, int line) {
+	int col;
+	while (true) {
+		switch (stime.at(0)) {
+		case L'월':
+			col = 0;
+			break;
+		case L'화':
+			col = 1;
+			break;
+		case L'수':
+			col = 2;
+			break;
+		case L'목':
+			col = 3;
+			break;
+		case L'금':
+			col = 4;
+			break;
+		case L'토':
+			col = 5;
+			break;
+		case L'일':
+			col = 6;
+		}
+
+		// map 선언 map<wstring, vector<int>(**)> profTimeTable; 이런식으로 했을 때
+		if (!profTimeTable.count(sprof)) {	// sprof 키가 map에 없으면 배열 동적할당 후 map에 추가
+			profTimeTable[sprof] = new (vector<int>[1][22][7]);
+		}
+
+		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
+			if ((*profTimeTable[sprof])[i - 1][col].size() >= 1) {
+				is_duplicated_time_prof = true;
+			}
+			(*profTimeTable[sprof])[i - 1][col].push_back(line);
+		}
+
+		if (!roomTimeTable.count(sroom)) {	// sroom 키가 map에 없으면 배열 동적할당 후 map에 추가
+			roomTimeTable[sroom] = new (vector<int>[1][22][7]);
+		}
+
+		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
+			if ((*roomTimeTable[sroom])[i - 1][col].size() >= 1) {
+				is_duplicated_time_room = true;
+			}
+			(*roomTimeTable[sroom])[i - 1][col].push_back(line);
+		}
+
+		/* map 선언 map<wstring, vector<int>(*)[22][7]> profTimeTable; 이런식으로 했을 때
+		if (!profTimeTable.count(sprof)) {	// sprof 키가 map에 없으면 배열 동적할당 후 map에 추가
+			vector<int>(*profArr)[22][7] = (vector<int>(*)[22][7])malloc(sizeof(vector<int>) * 22 * 7);
+			profTimeTable[sprof] = profArr;
+		}
+
+		//시작 교시~마지막 교시 profTimeTable의 sprof키가 가리키는 배열 인덱스에 행 번호 추가
+		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
+			if ((*profTimeTable[sprof])[i - 1][col].size() >= 1) {
+				is_duplicated_time_prof = true;
+			}
+			(*profTimeTable[sprof])[i - 1][col].push_back(line);	// 얘가 문제
+		}
+
+		if (!roomTimeTable.count(sroom)) {
+			vector<int>(*roomArr)[22][7] = (vector<int>(*)[22][7])malloc(sizeof(vector<int>) * 22 * 7);
+			roomTimeTable[sroom] = roomArr;
+		}
+
+		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
+			if ((*roomTimeTable[sroom])[i - 1][col].size() >= 1) {
+				is_duplicated_time_room = true;
+			}
+			(*roomTimeTable[sroom])[i - 1][col].push_back(line);
+		}
+		*/
+		if (stime.size() > 6) {
+			stime = stime.substr(7, 6);
+		}
+		else { return; }
+	}
 }
