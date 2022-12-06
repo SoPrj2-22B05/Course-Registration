@@ -375,6 +375,16 @@ void print_Errors() {
 		}
 	}
 
+	//map의 value로 들어가는 동적할당 해제
+	/*
+	for (auto it = profTimeTable.begin(); it != profTimeTable.end(); it++) {
+		delete[] it->second;
+	}
+	for (auto it = roomTimeTable.begin(); it != roomTimeTable.end(); it++) {
+		delete[] it->second;
+	}
+	*/
+
 	if (has_Error) {
 		cout << "프로그램을 종료합니다." << endl;
 		system("pause");
@@ -663,9 +673,9 @@ void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring&
 			col = 6;
 		}
 
-		// map 선언 map<wstring, vector<int>(**)> profTimeTable; 이런식으로 했을 때
 		if (!profTimeTable.count(sprof)) {	// sprof 키가 map에 없으면 배열 동적할당 후 map에 추가
-			profTimeTable[sprof] = new (vector<int>[1][22][7]);
+			vector<int>(*profArr)[22][7] = new (vector<int>[1][22][7]);
+			profTimeTable[sprof] = profArr;
 		}
 
 		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
@@ -676,32 +686,7 @@ void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring&
 		}
 
 		if (!roomTimeTable.count(sroom)) {	// sroom 키가 map에 없으면 배열 동적할당 후 map에 추가
-			roomTimeTable[sroom] = new (vector<int>[1][22][7]);
-		}
-
-		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
-			if ((*roomTimeTable[sroom])[i - 1][col].size() >= 1) {
-				is_duplicated_time_room = true;
-			}
-			(*roomTimeTable[sroom])[i - 1][col].push_back(line);
-		}
-
-		/* map 선언 map<wstring, vector<int>(*)[22][7]> profTimeTable; 이런식으로 했을 때
-		if (!profTimeTable.count(sprof)) {	// sprof 키가 map에 없으면 배열 동적할당 후 map에 추가
-			vector<int>(*profArr)[22][7] = (vector<int>(*)[22][7])malloc(sizeof(vector<int>) * 22 * 7);
-			profTimeTable[sprof] = profArr;
-		}
-
-		//시작 교시~마지막 교시 profTimeTable의 sprof키가 가리키는 배열 인덱스에 행 번호 추가
-		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
-			if ((*profTimeTable[sprof])[i - 1][col].size() >= 1) {
-				is_duplicated_time_prof = true;
-			}
-			(*profTimeTable[sprof])[i - 1][col].push_back(line);	// 얘가 문제
-		}
-
-		if (!roomTimeTable.count(sroom)) {
-			vector<int>(*roomArr)[22][7] = (vector<int>(*)[22][7])malloc(sizeof(vector<int>) * 22 * 7);
+			vector<int>(*roomArr)[22][7] = new (vector<int>[1][22][7]);
 			roomTimeTable[sroom] = roomArr;
 		}
 
@@ -711,7 +696,7 @@ void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring&
 			}
 			(*roomTimeTable[sroom])[i - 1][col].push_back(line);
 		}
-		*/
+
 		if (stime.size() > 6) {
 			stime = stime.substr(7, 6);
 		}
