@@ -32,6 +32,10 @@ int admin_count = 0;
 bool is_duplicated_UID = false;
 map<wstring, vector<int>> UIDs; // <ÇÐ¹ø(±³¹ø), ÇØ´çÇÏ´Â Çàµé>
 
+bool is_duplicated_time_prof;	// ´ã´ç±³¼ö - °­ÀÇ½Ã°£ Áßº¹ Ã¼Å© (Áß°£ ÀÌÈÄ »õ·Î Ãß°¡)
+bool is_duplicated_time_room;	// °­ÀÇ½Ç - °­ÀÇ½Ã°£ Áßº¹ Ã¼Å© (Áß°£ ÀÌÈÄ »õ·Î Ãß°¡)
+map<wstring, vector<int>(*)[22][7]> profTimeTable;	//´ã´ç±³¼ö map (Áß°£ ÀÌÈÄ »õ·Î Ãß°¡)
+map<wstring, vector<int>(*)[22][7]> roomTimeTable;	//°­ÀÇ½Ç map (Áß°£ ÀÌÈÄ »õ·Î Ãß°¡)
 
 void check_File_Exist();
 void check_Subject_File();
@@ -46,6 +50,8 @@ bool check_Sgrade(wstring const& str);
 bool check_Stime(wstring const& str);
 bool check_Scapacity(wstring const& str);
 bool check_Smajor_Sgrade_Match(wstring const& smajor, wstring const& sgrade, int line);
+bool check_Sprof(wstring const& str);
+bool check_Sroom(wstring const& str);
 
 bool check_UID(wstring const& str);
 bool check_Uname(wstring const& str);
@@ -55,6 +61,10 @@ bool check_Acquisition_Credit(wstring const& str);
 
 string wstr2str(const std::wstring& _src);
 wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
+
+void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring& stime, int line);
+void print_Sprof_Stime_redundancy();
+void print_Sroom_Stime_redundancy();
 
 
 
@@ -108,7 +118,7 @@ void check_Subject_File() {
 			}
 		}
 
-		if (data.size() != 7) { // ¿ä¼Ò 7°³ÀÎÁö Ã¼Å©
+		if (data.size() != 9) { // ¿ä¼Ò 9°³ÀÎÁö Ã¼Å©
 			Subject_File_Grammar_Error_Line.push_back(lineCount);
 			continue;
 		}
@@ -151,6 +161,15 @@ void check_Subject_File() {
 		if (!check_Smajor_Sgrade_Match(data[3], data[4],lineCount)) { // Àü°ø/±³¾ç - ÇÐ³â ¸ÅÄª Ã¼Å©
 			is_unmatched_major_grade = true;
 		}
+		if (!check_Sprof(data[7])) { // ´ã´ç±³¼ö Ã¼Å©
+			Subject_File_Grammar_Error_Line.push_back(lineCount);
+			continue;
+		}
+		if (!check_Sroom(data[8])) { // °­ÀÇ½Ç Ã¼Å©
+			Subject_File_Grammar_Error_Line.push_back(lineCount);
+			continue;
+		}
+		save_Sprof_Sroom_Stime(data[7], data[8], data[5], lineCount);
 
 		//for (int i = 0; i < data.size(); i++) {
 		//	wcout << data[i] + L" + ";
@@ -166,7 +185,7 @@ void check_Subject_File() {
 		tmp->grade = stoi(data[4]);
 		tmp->time = wstr2str(data[5]);
 		tmp->max = stoi(data[6]);
-		
+
 		Subject[stoi(data[0])] = tmp;
 	}
 	gotoClassic;
@@ -271,7 +290,7 @@ void print_Errors() {
 			(i == num_G_error - 1) ? printf("\n") : printf(",");
 		}
 	}
-	else if (is_duplicated_SID || is_unmatched_major_grade) { // ÀÇ¹Ì ¿À·ù ÀÖ´Â °æ¿ì
+	else if (is_duplicated_SID || is_unmatched_major_grade || is_duplicated_time_prof || is_duplicated_time_room) { // ÀÇ¹Ì ¿À·ù ÀÖ´Â °æ¿ì
 		has_Error = true;
 		printf("¿À·ù : °ú¸ñ µ¥ÀÌÅÍ ÆÄÀÏÀÇ ÀÇ¹Ì ±ÔÄ¢ÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù.\n");
 
@@ -304,6 +323,16 @@ void print_Errors() {
 				printf("%dÇà", zero_major_lines[i]);
 				(i == error_size - 1) ? printf("\n") : printf(",");
 			}
+		}
+
+		// ´ã´ç±³¼ö ½Ã°£Ç¥ Áßº¹ ÀÖÀ¸¸é Ãâ·Â
+		if (is_duplicated_time_prof) {
+			print_Sprof_Stime_redundancy();
+		}
+
+		// °­ÀÇ½Ç ½Ã°£Ç¥ Áßº¹ ÀÖÀ¸¸é Ãâ·Â
+		if (is_duplicated_time_room) {
+			print_Sroom_Stime_redundancy();
 		}
 	}
 
@@ -345,6 +374,16 @@ void print_Errors() {
 			printf("°ü¸®ÀÚ°¡ ÇÑ ¸íµµ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.\n");
 		}
 	}
+
+	//mapÀÇ value·Î µé¾î°¡´Â µ¿ÀûÇÒ´ç ÇØÁ¦
+	/*
+	for (auto it = profTimeTable.begin(); it != profTimeTable.end(); it++) {
+		delete[] it->second;
+	}
+	for (auto it = roomTimeTable.begin(); it != roomTimeTable.end(); it++) {
+		delete[] it->second;
+	}
+	*/
 
 	if (has_Error) {
 		cout << "ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù." << endl;
@@ -506,6 +545,39 @@ bool check_Smajor_Sgrade_Match(wstring const& smajor, wstring const& sgrade, int
 	return true;
 }
 
+bool check_Sprof(wstring const& str) {
+	// °¢ ¹®ÀÚ´Â ¼ýÀÚ, ·Î¸¶ÀÚ ´ë¼Ò¹®ÀÚ, ÀÚ¸ð Á¶ÇÕÀÌ ¿Ï¼ºµÈ ÇÑ±Û
+	// ¼ýÀÚ°¡ Æ÷ÇÔµÉ °æ¿ì Á¦ÀÏ ¸¶Áö¸· ÇÑ ¹®ÀÚ¿¡¸¸ »ç¿ë °¡´É
+	// ±æÀÌ´Â ¼ýÀÚ¸¦ Á¦¿ÜÇÏ°í 1 ÀÌ»ó 10 ÀÌÇÏ
+	// °ø¹é·ù´Â ÀüÇô µé¾î°¡ÀÖÁö ¾ÊÀ½
+	wregex prof_reg(L"^[°¡-ÆRa-zA-Z]{1,10}[0-9]?$");
+	if (!regex_match(str, prof_reg)) {
+		return false;
+	}
+	return true;
+}
+
+bool check_Sroom(wstring const& str) {
+	// [°Ç¹°] + ¼ýÀÚ 3°³
+	wregex room_reg(L"^[»õ¹ý°øÀÎ¿¹][0-9]{3}$");
+	if (!regex_match(str, room_reg)) {
+		return false;
+	}
+
+	// ¸Ç ¿ÞÂÊ ¼ýÀÚ 1 ÀÌ»ó 5 ÀÌÇÏ
+	int floor = stoi(str.substr(1, 1));
+	if (floor < 1 || floor > 5) {
+		return false;
+	}
+
+	// ¿À¸¥ÂÊ µÎ ¼ýÀÚ 1 ÀÌ»ó 19 ÀÌÇÏ
+	int roomNum = stoi(str.substr(2, 2));
+	if (roomNum < 1 || roomNum > 19) {
+		return false;
+	}
+	return true;
+}
+
 bool check_UID(wstring const& str) {
 	// ¹®ÀÚ¿­ ³» ¸ðµç °¢ ¹®ÀÚ´Â ¼ýÀÚ·Î¸¸ ±¸¼º
 	// ¹®ÀÚ¿­ ±æÀÌ°¡ 9
@@ -573,4 +645,105 @@ wstring& trim(wstring& s, const wchar_t* t) {
 	s.erase(0, s.find_first_not_of(t));
 	s.erase(s.find_last_not_of(t) + 1);
 	return s;
+}
+
+void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring& stime, int line) {
+	int col;
+	while (true) {
+		switch (stime.at(0)) {
+		case L'¿ù':
+			col = 0;
+			break;
+		case L'È­':
+			col = 1;
+			break;
+		case L'¼ö':
+			col = 2;
+			break;
+		case L'¸ñ':
+			col = 3;
+			break;
+		case L'±Ý':
+			col = 4;
+			break;
+		case L'Åä':
+			col = 5;
+			break;
+		case L'ÀÏ':
+			col = 6;
+		}
+
+		if (!profTimeTable.count(sprof)) {	// sprof Å°°¡ map¿¡ ¾øÀ¸¸é ¹è¿­ µ¿ÀûÇÒ´ç ÈÄ map¿¡ Ãß°¡
+			vector<int>(*profArr)[22][7] = new (vector<int>[1][22][7]);
+			profTimeTable[sprof] = profArr;
+		}
+
+		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
+			if ((*profTimeTable[sprof])[i - 1][col].size() >= 1) {
+				is_duplicated_time_prof = true;
+			}
+			(*profTimeTable[sprof])[i - 1][col].push_back(line);
+		}
+
+		if (!roomTimeTable.count(sroom)) {	// sroom Å°°¡ map¿¡ ¾øÀ¸¸é ¹è¿­ µ¿ÀûÇÒ´ç ÈÄ map¿¡ Ãß°¡
+			vector<int>(*roomArr)[22][7] = new (vector<int>[1][22][7]);
+			roomTimeTable[sroom] = roomArr;
+		}
+
+		for (int i = stoi(wstr2str(stime.substr(1, 2))); i <= stoi(wstr2str(stime.substr(4, 2))); i++) {
+			if ((*roomTimeTable[sroom])[i - 1][col].size() >= 1) {
+				is_duplicated_time_room = true;
+			}
+			(*roomTimeTable[sroom])[i - 1][col].push_back(line);
+		}
+
+		if (stime.size() > 6) {
+			stime = stime.substr(7, 6);
+		}
+		else { return; }
+	}
+}
+
+void print_Sprof_Stime_redundancy() {
+	gotoUTF;
+	map<int, wchar_t> days = { {0,L'¿ù'},{1,L'È­',},{2,L'¼ö'},{3,L'¸ñ'},{4,L'±Ý'},{5,L'Åä'},{6,L'ÀÏ'} };
+
+	for (auto it = profTimeTable.begin(); it != profTimeTable.end(); it++) {
+		for (int j = 0; j < 7; j++) {
+			for (int i = 0; i < 22; i++) {
+				int v_size = ((*(it->second))[i][j]).size();
+				if (v_size > 1) {
+					wcout << "\"" << it->first << "\" ";
+					wprintf(L"±³¼öÀÇ °ú¸ñµé Áß \"%c%02d±³½Ã\"°¡ °ãÄ¡´Â °ú¸ñµéÀÌ Á¸ÀçÇÕ´Ï´Ù.\n#", days[j], i + 1);
+					for (int k = 0; k < v_size; k++) {
+						wprintf(L"%dÇà", ((*(it->second))[i][j])[k]);
+						(k == v_size - 1) ? printf("\n") : printf(",");
+					}
+				}
+			}
+		}
+	}
+	gotoClassic;
+}
+
+void print_Sroom_Stime_redundancy() {
+	gotoUTF;
+	map<int, wchar_t> days = { {0,L'¿ù'},{1,L'È­',},{2,L'¼ö'},{3,L'¸ñ'},{4,L'±Ý'},{5,L'Åä'},{6,L'ÀÏ'} };
+
+	for (auto it = roomTimeTable.begin(); it != roomTimeTable.end(); it++) {
+		for (int j = 0; j < 7; j++) {
+			for (int i = 0; i < 22; i++) {
+				int v_size = ((*(it->second))[i][j]).size();
+				if (v_size > 1) {
+					wcout << "\"" << it->first << "\" ";
+					wprintf(L"°­ÀÇ½Ç¿¡¼­ ¿­¸° °ú¸ñµé Áß \"%c%02d±³½Ã\"°¡ °ãÄ¡´Â °ú¸ñµéÀÌ Á¸ÀçÇÕ´Ï´Ù.\n#", days[j], i + 1);
+					for (int k = 0; k < v_size; k++) {
+						wprintf(L"%dÇà", ((*(it->second))[i][j])[k]);
+						(k == v_size - 1) ? printf("\n") : printf(",");
+					}
+				}
+			}
+		}
+	}
+	gotoClassic;
 }
