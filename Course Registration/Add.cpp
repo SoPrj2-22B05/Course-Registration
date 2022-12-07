@@ -32,8 +32,8 @@ void Add(string command, string studentid, string studentname) {
 	vector<string>found_time;
 	vector<string> compare_times;
 	int mileage_sum;
-	bool c1, c2, c3, c4, c5,c6;
-	c1 = c2 = c3 = c4 = c5 = true;
+	bool c1, c2, c3, c4, c5, c6;
+	c1 = c2 = c3 = c4 = c5 = c6 = true;
 
 	while (getline(ss, token, '/'))
 	{
@@ -133,7 +133,7 @@ void Add(string command, string studentid, string studentname) {
 		//cout << "오류 : 마일리지 36을 초과해 배팅할 수 없습니다." << endl;
 		c5 = false;
 	}
-	if (c1 && c2 && c3 && c4 && c5) {
+	if (c1 && c2 && c3 && c4 && c5 && c6) {
 		// 추가 yes / no 
 		string filename2 = id + '_' + subname + "_출석부.txt";
 		wofstream f2;
@@ -160,7 +160,7 @@ void Add(string command, string studentid, string studentname) {
 	}
 	else {
 		if (!c1) cout << "오류 : 이미 추가한 과목입니다" << endl;
-		if (!c6) cout << "오류 : 이미 추가된 과목의 분밥입니다" << endl;
+		if (c1 && !c6) cout << "오류 : 이미 추가된 과목의 분반입니다" << endl;
 		if (!c2)cout << "최대 이수 학점(18학점)을 초과하였습니다.";
 		if (c1 && !c3) {
 			sort(found_time.begin(), found_time.end());
