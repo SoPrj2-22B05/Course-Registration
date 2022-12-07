@@ -145,6 +145,7 @@ void Student_menu() {
     string del[ORDER_NUM] = { "delete", "d", "삭제", "ㅅㅈ", "-" };
     string alter[ORDER_NUM] = { "alter", "alt", "변경", "ㅂㄱ", "~" };
     string str;
+    AppliedSubject();
     cout << "Course Registration > ";
     getline(cin, str);
     str.erase(0, str.find_first_not_of(" \t\n\r\f\v"));
@@ -546,5 +547,36 @@ bool start_check() {
     }
     else {
         return true;
+    }
+}
+
+void AppliedSubject() {
+    int mileage_sum = 72;
+    vector<string> subid;
+    vector<int> submlg;
+    wstring line;
+    USES_CONVERSION;
+    string filename1 = ID + '_' + name + "_수강신청목록.txt";
+    wfstream f1;
+    f1.imbue(locale("ko_KR.UTF-8"));
+    f1.open(filename1);
+    if (f1.is_open()) { // 있으면 읽어온 뒤 과목시간대, 학점 긁어오기
+        while (getline(f1, line)) {
+            wstring tmpid = line.substr(0, 4);
+            wstring tmpmlg = line.substr(4);
+            subid.push_back(w2s(tmpid));
+            submlg.push_back(stoi(tmpmlg));
+            mileage_sum -= stoi(tmpmlg);
+        }
+        f1.close();
+    }
+    if (mileage_sum < 0)cerr << "마일리지 오류" << endl;
+    else {
+        cout << "<신청과목현황>" << endl;
+        cout << "학번 : " << ID << endl;
+        for (int i = 0; i < subid.size(); i++) {
+            cout << "[" << subid[i] <<"] " << Subject[stoi(subid[i])]->name << " / " << Subject[stoi(subid[i])]->grade << " / " << Subject[stoi(subid[i])]->time << " / " << submlg[i] << endl;
+        }
+        cout << "남은 마일리지 : " << mileage_sum << endl;
     }
 }

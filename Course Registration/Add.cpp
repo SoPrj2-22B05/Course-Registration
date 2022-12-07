@@ -32,7 +32,7 @@ void Add(string command, string studentid, string studentname) {
 	vector<string>found_time;
 	vector<string> compare_times;
 	int mileage_sum;
-	bool c1, c2, c3, c4, c5;
+	bool c1, c2, c3, c4, c5,c6;
 	c1 = c2 = c3 = c4 = c5 = true;
 
 	while (getline(ss, token, '/'))
@@ -74,10 +74,8 @@ void Add(string command, string studentid, string studentname) {
 			wstring tmpid = line.substr(0, 4);
 			wstring tmpmlg = line.substr(4);
 			mileage_sum += stoi(tmpmlg);
-			if (tmpid == wid) { // 사용자 중복 체크
-				c1 = false;
-				//cout << "오류 : 이미 추가한 과목입니다"<<endl;
-			}
+			if (tmpid == wid) c1 = false; // 중복체크
+			if (Subject[stoi(tmpid)]->name == Subject[stoi(wid)]->name) c6 = false; // 분반 체크
 			find_time.push_back(make_pair(wtos(tmpid), Subject[stoi(tmpid)]->time)); // 과목 시간대 저장
 			credit_sum += Subject[stoi(tmpid)]->credit;
 		}
@@ -162,6 +160,7 @@ void Add(string command, string studentid, string studentname) {
 	}
 	else {
 		if (!c1) cout << "오류 : 이미 추가한 과목입니다" << endl;
+		if (!c6) cout << "오류 : 이미 추가된 과목의 분밥입니다" << endl;
 		if (!c2)cout << "최대 이수 학점(18학점)을 초과하였습니다.";
 		if (c1 && !c3) {
 			sort(found_time.begin(), found_time.end());
