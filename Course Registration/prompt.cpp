@@ -575,7 +575,7 @@ void AppliedSubject() {
         cout << "<신청과목현황>" << endl;
         cout << "학번 : " << ID << endl;
         for (int i = 0; i < subid.size(); i++) {
-            cout << "[" << subid[i] <<"] " << Subject[stoi(subid[i])]->name << " / " << Subject[stoi(subid[i])]->grade << "학점 / " << Subject[stoi(subid[i])]->time << " / " << submlg[i] << "마일리지" << endl;
+            cout << "[" << subid[i] <<"] " << Subject[stoi(subid[i])]->name << " / " << Subject[stoi(subid[i])]->credit << "학점 / " << Subject[stoi(subid[i])]->time << " / " << submlg[i] << "마일리지" << endl;
         }
         cout << "남은 마일리지 : " << mileage_sum << endl;
     }
