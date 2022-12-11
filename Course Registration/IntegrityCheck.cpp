@@ -62,7 +62,7 @@ bool check_Acquisition_Credit(wstring const& str);
 string wstr2str(const std::wstring& _src);
 wstring& trim(wstring& s, const wchar_t* t = L" \t\n\r\f\v");
 
-void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring& stime, int line);
+void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring const& time, int line);
 void print_Sprof_Stime_redundancy();
 void print_Sroom_Stime_redundancy();
 
@@ -647,8 +647,9 @@ wstring& trim(wstring& s, const wchar_t* t) {
 	return s;
 }
 
-void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring& stime, int line) {
+void save_Sprof_Sroom_Stime(wstring const& sprof, wstring const& sroom, wstring const& time, int line) {
 	int col;
+	wstring stime = time;
 	while (true) {
 		switch (stime.at(0)) {
 		case L'¿ù':
